@@ -1,32 +1,34 @@
 from __future__ import annotations
-from typing import Type
+from typing import Any
 import abc
 
 import pygame as pg
 
-from mover import Mover
+from .mover import Mover
 
 
 class Element(pg.sprite.Sprite):
     @abc.abstractmethod
-    def __init__(self, mover: Type[Mover]):
+    def __init__(self, mover: Mover):
         if not isinstance(mover, Mover):
             raise TypeError
 
         self.mover = mover
         super().__init__()
 
-    def update(self) -> None:
+        self.rect: pg.rect.Rect
+
+    def update(self, *args: Any, **kwargs: Any) -> None:
         self.mover.advance()
-        self.rect.center = self.mover.as_tuple()
+        self.rect.center = self.mover.as_trimmed_tuple()
 
 
 class BlackBlock(Element):
-    def __init__(self, mover: Type[Mover], width: int, height: int):
+    def __init__(self, mover: Mover, width: int, height: int):
         super().__init__(mover)
 
         self.image = pg.Surface([width, height])
         self.image.fill((0, 0, 0))
 
-        self.rect = self.image.get_rect()
-        self.rect.center = self.mover.as_tuple()
+        self.rect: pg.rect.Rect = self.image.get_rect()
+        self.rect.center = self.mover.as_trimmed_tuple()

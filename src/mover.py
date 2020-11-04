@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import Tuple
+from typing import Tuple, Sequence
 import abc
 
-from helper import Coordinate, parseVector
+from .vector import Coordinate, parseVector
 
 
 class Mover():
@@ -13,12 +13,14 @@ class Mover():
     def advance(self) -> None:
         pass
 
-    def as_tuple(self) -> Tuple[float, float]:
+    def as_tuple(self) -> Sequence[float]:
         return self.pos.as_tuple()
+
+    def as_trimmed_tuple(self) -> Tuple[int, int]:
+        return self.pos.as_trimmed_tuple()
 
 
 class VelocityMover(Mover):
-    @abc.abstractmethod
     def __init__(self, pos: Coordinate, vel: Coordinate):
         super().__init__(pos)
         self.vel = parseVector(vel)
@@ -29,7 +31,6 @@ class VelocityMover(Mover):
 
 
 class AccelerationMover(VelocityMover):
-    @abc.abstractmethod
     def __init__(self, pos: Coordinate, vel: Coordinate, acc: Coordinate):
         super().__init__(pos, vel)
         self.acc = parseVector(acc)

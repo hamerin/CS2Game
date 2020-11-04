@@ -1,34 +1,58 @@
 from __future__ import annotations
-from typing import Tuple, Union
+from typing import Tuple, Union, Sequence, Iterator
 import math
 
 
-class Vector(list):
-    def __init__(self, *arg):
-        super().__init__([*arg])
+class Vector:
+    def __init__(self, *arg: float):
+        self.data = [*arg]
+        self.dimension = len(self.data)
+
+    def __getitem__(self, key: int) -> float:
+        return self.data[key]
+
+    def __setitem__(self, key:int, item: float) -> None:
+        self.data[key] = item
+
+    def append(self, item: float) -> None:
+        self.data.append(item)
+
+    def __iter__(self) -> Iterator[float]:
+        return self.data.__iter__()
+
+    def __len__(self) -> int:
+        return len(self.data)
 
     def __add__(self, rhs: Vector) -> Vector:
         if not isinstance(rhs, Vector):
-            return super().__add__(rhs)
-        return Vector(*map(sum, zip(self, rhs)))
+            raise TypeError
+
+        if self.dimension != rhs.dimension:
+            raise ValueError
+
+        return Vector(*map(lambda t: t[0] + t[1], zip(self, rhs)))
 
     def __iadd__(self, rhs: Vector) -> Vector:
-        return self + rhs
+        return self.__add__(rhs)
 
     def __sub__(self, rhs: Vector) -> Vector:
         if not isinstance(rhs, Vector):
-            return super().__add__(rhs)
+            raise TypeError
+
+        if self.dimension != rhs.dimension:
+            raise ValueError
+
         return Vector(*map(lambda t: t[0] - t[1], zip(self, rhs)))
 
     def __isub__(self, rhs: Vector) -> Vector:
-        return self - rhs
+        return self.__sub__(rhs)
 
     def __abs__(self) -> float:
         return sum(map(lambda x: x**2, self))**0.5
 
     def __mul__(self, rhs: Union[int, float]) -> Vector:
         if not isinstance(rhs, (int, float)):
-            return super().__mul__(rhs)
+            raise TypeError
         return Vector(*map(lambda x: x*rhs, self))
 
     def __truediv__(self, rhs: Union[int, float]) -> Vector:
@@ -39,12 +63,14 @@ class Vector(list):
     def normalize(self) -> Vector:
         return self * abs(self)
 
-    def as_tuple(self) -> Tuple:
+    def as_tuple(self) -> Sequence[float]:
         return tuple(self)
+
+    def as_trimmed_tuple(self) -> Tuple[int, int]:
+        return (int(self[0]), int(self[1]))
 
 
 Coordinate = Union[Vector, Tuple[float, float]]
-
 
 def parseVector(cor: Coordinate) -> Vector:
     if len(cor) != 2:
