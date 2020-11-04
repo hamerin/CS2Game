@@ -18,7 +18,7 @@ class Element(pg.sprite.Sprite):
 
         self.rect: pg.rect.Rect
 
-    def update(self, *args: Any, **kwargs: Any) -> None:
+    def update(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self.mover.advance()
         self.rect.center = self.mover.as_trimmed_tuple()
 
