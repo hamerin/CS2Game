@@ -22,4 +22,4 @@ class SpriteSequence(pg.sprite.Group):
             del self.seq[-1]
 
         self.frameCount += 1
-        super().update()
+        super().update(*args, **kwargs)
