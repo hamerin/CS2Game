@@ -14,9 +14,6 @@ class Vector:
     def __setitem__(self, key:int, item: float) -> None:
         self.data[key] = item
 
-    def append(self, item: float) -> None:
-        self.data.append(item)
-
     def __iter__(self) -> Iterator[float]:
         return self.data.__iter__()
 

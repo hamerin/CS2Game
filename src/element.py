@@ -4,6 +4,7 @@ import abc
 
 import pygame as pg
 
+from . import constant as ct
 from .mover import Mover
 
 
@@ -18,8 +19,8 @@ class Element(pg.sprite.Sprite):
 
         self.rect: pg.rect.Rect
 
-    def update(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        self.mover.advance()
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        self.mover.advance(*args, **kwargs)
         self.rect.center = self.mover.as_trimmed_tuple()
 
 
@@ -28,7 +29,7 @@ class BlackBlock(Element):
         super().__init__(mover)
 
         self.image = pg.Surface([width, height])
-        self.image.fill((0, 0, 0))
+        self.image.fill(ct.BLACK)
 
         self.rect: pg.rect.Rect = self.image.get_rect()
         self.rect.center = self.mover.as_trimmed_tuple()
