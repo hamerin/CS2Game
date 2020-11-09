@@ -21,6 +21,8 @@ class Element(pg.sprite.Sprite):
 
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.mover.advance(*args, **kwargs)
+        if not self.mover.in_bound():
+            self.kill()
         self.rect.center = self.mover.as_trimmed_tuple()
 
 
@@ -30,6 +32,16 @@ class BlackBlock(Element):
 
         self.image = pg.Surface([width, height])
         self.image.fill(ct.BLACK)
+
+        self.rect: pg.rect.Rect = self.image.get_rect()
+        self.rect.center = self.mover.as_trimmed_tuple()
+
+class BlueBlock(Element):
+    def __init__(self, mover: Mover, width: int, height: int):
+        super().__init__(mover)
+
+        self.image = pg.Surface([width, height])
+        self.image.fill(ct.BLUE)
 
         self.rect: pg.rect.Rect = self.image.get_rect()
         self.rect.center = self.mover.as_trimmed_tuple()

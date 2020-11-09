@@ -1,11 +1,12 @@
 from __future__ import annotations
 from typing import Tuple, Sequence, Any, Dict, Callable
 import abc
+import math
 
 import pygame as pg
 
 from . import constant as ct
-from .vector import Coordinate, parseVector, Vector
+from .vector import Coordinate, parseVector, Vector, getHat
 
 
 class Mover():
@@ -15,6 +16,9 @@ class Mover():
 
     def advance(self, *args: Any, **kwargs: Any) -> None:
         pass
+
+    def in_bound(self) -> bool:
+        return 0 <= self.pos[0] <= ct.WIDTH and 0 <= self.pos[1] <= ct.HEIGHT
 
     def as_tuple(self) -> Sequence[float]:
         return self.pos.as_tuple()
@@ -28,7 +32,7 @@ def restrict(fun: Callable[..., None]) -> Callable[..., None]:
         lastpos = self.pos
         fun(self, *args, **kwargs)
 
-        if not (0 <= self.pos[0] <= ct.WIDTH and 0 <= self.pos[1] <= ct.HEIGHT):
+        if not self.in_bound():
             self.pos = lastpos
 
     return decorated
@@ -83,4 +87,34 @@ class EventMover(VelocityMover):
                 else:
                     self.vel -= dic.get(e.key, Vector(0, 0)) * self.magnitude
         else:
-            super().advance()
+            super().advance(*args, **kwargs)
+
+
+class FollowingMover(VelocityMover):
+    maxDeg = 2 * math.pi / 360
+    minDot = getHat(0) @ getHat(maxDeg)
+    followTime = 30
+
+    def __init__(self, pos: Coordinate, vel: Coordinate, toFollow: Mover):
+        super().__init__(pos, vel)
+
+        self.vsize = abs(self.vel)
+        self.theta = self.vel.get_theta()
+        self.toFollow = toFollow
+        self.frameCount = 0
+
+    def advance(self, *args: Any, **kwargs: Any) -> None:
+        self.frameCount += 1
+
+        if self.frameCount <= self.followTime * ct.FPS / self.vsize:
+            newtheta = (self.toFollow.pos - self.pos).get_theta()
+            if getHat(self.theta) @ getHat(newtheta) >= self.minDot:
+                self.theta = newtheta
+            elif getHat(self.theta).ccw(getHat(newtheta)) > 0:
+                self.theta += self.maxDeg
+            else:
+                self.theta -= self.maxDeg
+
+            self.theta %= (2 * math.pi)
+            self.vel = getHat(self.theta) * self.vsize
+        super().advance(*args, **kwargs)

@@ -5,10 +5,11 @@ from typing import Final, Tuple
 import pygame as pg
 
 from . import constant as ct
-from .element import BlackBlock
+from .element import BlackBlock, BlueBlock
 from .mover import AccelerationMover, EventMover
-from .basedanmaku import RadialBaseDanmaku
+from .basedanmaku import RadialBaseDanmaku, BurstBaseDanmaku, RadialFollowingBaseDanmaku
 from .spriteseq import SpriteDelayer, SpriteSequence
+
 
 def game() -> None:
     pg.init()  # 초기화
@@ -19,17 +20,17 @@ def game() -> None:
 
     center = displaysurf.get_rect().center
 
-    G_testBaseDanmaku1 = RadialBaseDanmaku(
-        BlackBlock, center, 4, 16, 0, 20, 20)
-    G_testBaseDanmaku2 = RadialBaseDanmaku(
-        BlackBlock, center, 3, 16, 0.5, 20, 20)
-    G_testBaseDanmaku3 = RadialBaseDanmaku(
-        BlackBlock, center, 2, 16, 0, 20, 20)
+    S_player = BlueBlock(EventMover(center), 20, 20)
+    G_player = pg.sprite.Group(S_player)
+
+    G_testBaseDanmaku1 = RadialFollowingBaseDanmaku(center, 8, 64, 0, S_player,
+                                                    BlackBlock, 20, 20)
+    G_testBaseDanmaku2 = BurstBaseDanmaku(center, 5, 16, 7,
+                                          BlackBlock, 20, 20)
+    G_testBaseDanmaku3 = BurstBaseDanmaku(center, 4, 16, 7,
+                                          BlackBlock, 20, 20)
     G_testDanmaku = pg.sprite.Group(
         *G_testBaseDanmaku1, *G_testBaseDanmaku2, *G_testBaseDanmaku3)
-
-    S_player = BlackBlock(EventMover((0, 0)), 20, 20)
-    G_player = pg.sprite.Group(S_player)
 
     G_all_sprites = pg.sprite.Group(*G_testDanmaku, *G_player)
     G_event_sprites = pg.sprite.Group(*G_player)

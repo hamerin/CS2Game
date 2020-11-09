@@ -11,7 +11,7 @@ class Vector:
     def __getitem__(self, key: int) -> float:
         return self.data[key]
 
-    def __setitem__(self, key:int, item: float) -> None:
+    def __setitem__(self, key: int, item: float) -> None:
         self.data[key] = item
 
     def __iter__(self) -> Iterator[float]:
@@ -50,15 +50,34 @@ class Vector:
     def __mul__(self, rhs: Union[int, float]) -> Vector:
         if not isinstance(rhs, (int, float)):
             raise TypeError
+
         return Vector(*map(lambda x: x*rhs, self))
+
+    def __matmul__(self, rhs: Vector) -> float:
+        if not isinstance(rhs, Vector):
+            raise TypeError
+
+        if len(self) != len(rhs):
+            raise ValueError
+
+        ret: float = 0
+        for i, el in enumerate(self):
+            ret += (el * rhs[i])
+
+        return ret
 
     def __truediv__(self, rhs: Union[int, float]) -> Vector:
         if not isinstance(rhs, (int, float)):
             raise TypeError
         return Vector(*map(lambda x: x/rhs, self))
 
+    def ccw(self, rhs: Vector) -> float:
+        if not isinstance(rhs, Vector):
+            raise TypeError
+        return self[0]*rhs[1] - self[1]*rhs[0]
+
     def normalize(self) -> Vector:
-        return self * abs(self)
+        return self / abs(self)
 
     def as_tuple(self) -> Sequence[float]:
         return tuple(self)
@@ -66,8 +85,12 @@ class Vector:
     def as_trimmed_tuple(self) -> Tuple[int, int]:
         return (int(self[0]), int(self[1]))
 
+    def get_theta(self) -> float:
+        return math.atan2(self[1], self[0])
+
 
 Coordinate = Union[Vector, Tuple[float, float]]
+
 
 def parseVector(cor: Coordinate) -> Vector:
     if len(cor) != 2:
