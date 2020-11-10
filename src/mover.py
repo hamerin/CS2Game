@@ -6,7 +6,7 @@ import math
 import pygame as pg
 
 from . import constant as ct
-from .vector import Coordinate, parseVector, Vector, getHat
+from .helpers.vector import Coordinate, parseVector, Vector, getHat
 
 
 class Mover():
@@ -93,7 +93,7 @@ class EventMover(VelocityMover):
 class FollowingMover(VelocityMover):
     maxDeg = 2 * math.pi / 360
     minDot = getHat(0) @ getHat(maxDeg)
-    followTime = 30
+    followTime = 40
 
     def __init__(self, pos: Coordinate, vel: Coordinate, toFollow: Mover):
         super().__init__(pos, vel)

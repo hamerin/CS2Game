@@ -4,7 +4,7 @@ import math
 
 import pygame as pg
 
-from .vector import Coordinate, parseVector, getHat
+from .helpers.vector import Coordinate, parseVector, getHat
 from .mover import VelocityMover, FollowingMover
 from .element import Element
 

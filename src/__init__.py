@@ -18,12 +18,13 @@ def game() -> None:
     displaysurf = pg.display.set_mode((ct.WIDTH, ct.HEIGHT), 0, 32)
     clock = pg.time.Clock()
 
-    center = displaysurf.get_rect().center
+    dprect = displaysurf.get_rect()
+    center = dprect.center
 
-    S_player = BlueBlock(EventMover(center), 20, 20)
+    S_player = BlueBlock(EventMover(dprect.midbottom), 20, 20)
     G_player = pg.sprite.Group(S_player)
 
-    G_testBaseDanmaku1 = RadialFollowingBaseDanmaku(center, 8, 64, 0, S_player,
+    G_testBaseDanmaku1 = RadialFollowingBaseDanmaku(center, 8, 16, 0, S_player,
                                                     BlackBlock, 20, 20)
     G_testBaseDanmaku2 = BurstBaseDanmaku(center, 5, 16, 7,
                                           BlackBlock, 20, 20)

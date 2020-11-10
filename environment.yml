@@ -1,4 +1,4 @@
-name: CS2game
+name: CS2Game
 channels:
   - defaults
 dependencies:
@@ -39,4 +39,4 @@ dependencies:
   - zlib=1.2.11
   - pip:
     - pygame==2.0.0
-prefix: /home/hamerin/anaconda3/envs/CS2game
+prefix: /home/hamerin/anaconda3/envs/CS2Game
