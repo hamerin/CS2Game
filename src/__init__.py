@@ -21,15 +21,15 @@ def game() -> None:
     dprect = displaysurf.get_rect()
     center = dprect.center
 
-    S_player = BlueBlock(EventMover(dprect.midbottom), 20, 20)
+    S_player = BlueBlock(EventMover(dprect.midbottom), 10, 10)
     G_player = pg.sprite.Group(S_player)
 
-    G_testBaseDanmaku1 = RadialFollowingBaseDanmaku(center, 8, 16, 0, S_player,
-                                                    BlackBlock, 20, 20)
-    G_testBaseDanmaku2 = BurstBaseDanmaku(center, 5, 16, 7,
-                                          BlackBlock, 20, 20)
-    G_testBaseDanmaku3 = BurstBaseDanmaku(center, 4, 16, 7,
-                                          BlackBlock, 20, 20)
+    G_testBaseDanmaku1 = RadialFollowingBaseDanmaku(center, 3, 16, 0, S_player,
+                                                    BlackBlock, 10, 10)
+    G_testBaseDanmaku2 = BurstBaseDanmaku(center, 1.5, 16, 7,
+                                          BlackBlock, 10, 10)
+    G_testBaseDanmaku3 = BurstBaseDanmaku(center, 1, 16, 7,
+                                          BlackBlock, 10, 10)
     G_testDanmaku = pg.sprite.Group(
         *G_testBaseDanmaku1, *G_testBaseDanmaku2, *G_testBaseDanmaku3)
 
