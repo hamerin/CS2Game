@@ -63,7 +63,7 @@ class EventMover(VelocityMover):
 
     def __init__(self, pos: Coordinate):
         super().__init__(pos, (0, 0))
-        self.magnitude: float = 8
+        self.magnitude: float = 4
 
     @restrict
     def advance(self, *args: Any, **kwargs: Any) -> None:
