@@ -5,7 +5,7 @@ import math
 
 import pygame as pg
 
-from .helpers import get_actual, get_uniform_dispersion
+from .helpers import get_uniform_dispersion
 from .helpers.vector import Coordinate, Vector, parseVector, getHat
 from .mover import VelocityMover, FollowingMover
 from .element import Element

@@ -1,4 +1,4 @@
-from typing import Final, Tuple, Type
+from typing import Final, Tuple
 
 WIDTH: Final[int] = 768
 HEIGHT: Final[int] = 576
