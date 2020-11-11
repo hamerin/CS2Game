@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple, Sequence, Any, Dict, Callable
+from typing import Tuple, Sequence, Any, Dict, Callable, Final
 import abc
 import math
 
@@ -13,9 +13,10 @@ class Mover():
     @abc.abstractmethod
     def __init__(self, pos: Coordinate):
         self.pos = parseVector(pos)
+        self._frame = 0
 
     def advance(self, *args: Any, **kwargs: Any) -> None:
-        pass
+        self._frame += 1
 
     def in_bound(self) -> bool:
         return 0 <= self.pos[0] <= ct.WIDTH and 0 <= self.pos[1] <= ct.HEIGHT
@@ -91,9 +92,10 @@ class EventMover(VelocityMover):
 
 
 class FollowingMover(VelocityMover):
-    maxDeg = 2 * math.pi / 360
-    minDot = getHat(0) @ getHat(maxDeg)
-    followTime = 40
+    maxDeg: Final[float] = 2 * math.pi / 360
+    minDot: Final[float] = getHat(0) @ getHat(maxDeg)
+    followTime: Final[float] = 16
+    maxfollowTime: Final[float] = 6
 
     def __init__(self, pos: Coordinate, vel: Coordinate, toFollow: Mover):
         super().__init__(pos, vel)
@@ -101,12 +103,12 @@ class FollowingMover(VelocityMover):
         self.vsize = abs(self.vel)
         self.theta = self.vel.get_theta()
         self.toFollow = toFollow
-        self.frameCount = 0
+
+        self._followframe: Final[float] = min(self.maxfollowTime,
+                                              self.followTime / self.vsize) * ct.FPS
 
     def advance(self, *args: Any, **kwargs: Any) -> None:
-        self.frameCount += 1
-
-        if self.frameCount <= self.followTime * ct.FPS / self.vsize:
+        if self._frame <= self._followframe:
             newtheta = (self.toFollow.pos - self.pos).get_theta()
             if getHat(self.theta) @ getHat(newtheta) >= self.minDot:
                 self.theta = newtheta

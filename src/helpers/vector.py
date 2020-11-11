@@ -88,6 +88,12 @@ class Vector:
     def get_theta(self) -> float:
         return math.atan2(self[1], self[0])
 
+    def rotate(self, deg: float) -> Vector:       
+        def _get_hat(theta: float) -> Vector:
+            return Vector(math.cos(theta), math.sin(theta))
+
+        return _get_hat(self.get_theta() + deg) * abs(self)
+
 
 Coordinate = Union[Vector, Tuple[float, float]]
 
