@@ -1,0 +1,32 @@
+{
+    "type": "Generator",
+    "element": {
+        "type": "Block",
+        "color": "__blue__",
+        "width": 10,
+        "height": 10
+    },
+    "mover": {
+        "type": "Event",
+        "pos": "__midbottom__"
+    },
+    "group": "playerbullet",
+    "danmaku": {
+        "refresh": 10,
+        "1": {
+            "type": "Burst",
+            "vel": 10,
+            "N": 32,
+            "offset": 5,
+            "element": {
+                "type": "Block",
+                "color": "__black__",
+                "width": 10,
+                "height": 10
+            },
+            "kwargs": {
+                "direction": 1.5
+            }
+        }
+    }
+}

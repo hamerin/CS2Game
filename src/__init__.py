@@ -5,10 +5,10 @@ from typing import Final, Tuple
 import pygame as pg
 
 from . import constant as ct
-from .element import BlackBlock, BlueBlock, RedBlock
+from .element import BlackBlock, RedBlock
 from .mover import AccelerationMover, EventMover
 from .basedanmaku import RadialBaseDanmaku, BurstBaseDanmaku, PlaneBaseDanmaku
-from .spriteseq import SpriteDelayer, SpriteSequence
+from .generator import Player
 
 
 def game() -> None:
@@ -22,15 +22,17 @@ def game() -> None:
     center = dprect.center
 
     G_playerbullet = pg.sprite.Group()
-    S_player = BlueBlock(EventMover(dprect.midbottom), G_playerbullet, 10, 10)
+    S_player = Player(EventMover(dprect.midbottom),
+                      G_playerbullet, *ct.ELEMENTSIZE)
     G_player = pg.sprite.Group(S_player)
 
     G_testBaseDanmaku1 = RadialBaseDanmaku(center, 4, 32, 0.5,
-                                           S_player, RedBlock, 10, 10)
+                                           RedBlock, *ct.ELEMENTSIZE,
+                                           track=S_player)
     G_testBaseDanmaku2 = BurstBaseDanmaku(center, 1.5, 32, 13,
-                                          None, BlackBlock, 10, 10)
+                                          BlackBlock, *ct.ELEMENTSIZE)
     G_testBaseDanmaku3 = PlaneBaseDanmaku(dprect.midtop, 6, 50, 22,
-                                          None, BlackBlock, 10, 10)
+                                          BlackBlock, *ct.ELEMENTSIZE)
     G_testDanmaku = pg.sprite.Group(*G_testBaseDanmaku1,
                                     *G_testBaseDanmaku2,
                                     *G_testBaseDanmaku3)
