@@ -91,31 +91,31 @@ class EventMover(VelocityMover):
             super().advance(*args, **kwargs)
 
 
-class FollowingMover(VelocityMover):
+class TrackingMover(VelocityMover):
     maxDeg: Final[float] = 2 * math.pi / 360
     minDot: Final[float] = getHat(0) @ getHat(maxDeg)
-    followTime: Final[float] = 16
-    maxfollowTime: Final[float] = 6
+    trackTime: Final[float] = 16
+    maxtrackTime: Final[float] = 6
 
-    def __init__(self, pos: Coordinate, vel: Coordinate, toFollow: Mover):
+    def __init__(self, pos: Coordinate, vel: Coordinate, toTrack: Mover):
         super().__init__(pos, vel)
 
         self.vsize = abs(self.vel)
         self.theta = self.vel.get_theta()
-        self.toFollow = toFollow
+        self.toFollow = toTrack
 
-        self._followframe: Final[float] = min(self.maxfollowTime,
-                                              self.followTime / self.vsize) * ct.FPS
+        self._followframe: Final[float] = min(TrackingMover.maxtrackTime,
+                                              TrackingMover.trackTime / self.vsize) * ct.FPS
 
     def advance(self, *args: Any, **kwargs: Any) -> None:
         if self._frame <= self._followframe:
             newtheta = (self.toFollow.pos - self.pos).get_theta()
-            if getHat(self.theta) @ getHat(newtheta) >= self.minDot:
+            if getHat(self.theta) @ getHat(newtheta) >= TrackingMover.minDot:
                 self.theta = newtheta
             elif getHat(self.theta).ccw(getHat(newtheta)) > 0:
-                self.theta += self.maxDeg
+                self.theta += TrackingMover.maxDeg
             else:
-                self.theta -= self.maxDeg
+                self.theta -= TrackingMover.maxDeg
 
             self.theta %= (2 * math.pi)
             self.vel = getHat(self.theta) * self.vsize
