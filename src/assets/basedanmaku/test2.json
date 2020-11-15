@@ -1,0 +1,13 @@
+{
+    "__type__": "Burst",
+    "pos": "__center__",
+    "vel": 1.5,
+    "baseN": 32,
+    "N": 13,
+    "image": {
+        "__type__": "Block",
+        "color": "__black__",
+        "width": 10,
+        "height": 10
+    }
+}

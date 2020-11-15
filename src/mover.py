@@ -9,13 +9,13 @@ from . import constant as ct
 from .helpers.vector import Coordinate, parseVector, Vector, getHat
 
 
-class Mover():
+class Mover:
     @abc.abstractmethod
     def __init__(self, pos: Coordinate):
         self.pos = parseVector(pos)
         self._frame = 0
 
-    def advance(self, *args: Any, **kwargs: Any) -> None:
+    def advance(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._frame += 1
 
     def in_bound(self) -> bool:

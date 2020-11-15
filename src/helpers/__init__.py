@@ -10,7 +10,6 @@ def get_actual(opt: Optional[T]) -> T:
     actual: T = opt
     return actual
 
-
 def get_uniform_dispersion(center: float, sep: float, N: int) -> Generator[float, None, None]:
     ret = center - sep * (N - 1) / 2
 

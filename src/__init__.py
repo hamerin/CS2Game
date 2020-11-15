@@ -1,47 +1,47 @@
 import os
 import sys
-from typing import Final, Tuple
+import json
+from typing import Final, Tuple, Dict
 
 import pygame as pg
 
 from . import constant as ct
-from .element import BlackBlock, RedBlock
+from .element import Element
 from .mover import AccelerationMover, EventMover
 from .basedanmaku import RadialBaseDanmaku, BurstBaseDanmaku, PlaneBaseDanmaku
-from .generator import Player
+from .image import BlockImage
+from .parser import Parser
 
 
 def game() -> None:
+    print(os.getcwd())
     pg.init()  # 초기화
 
     pg.display.set_caption('Hello, world!')
     displaysurf = pg.display.set_mode((ct.WIDTH, ct.HEIGHT), 0, 32)
     clock = pg.time.Clock()
 
-    dprect = displaysurf.get_rect()
-    center = dprect.center
+    screenrect = displaysurf.get_rect()
 
-    G_playerbullet = pg.sprite.Group()
-    S_player = Player(EventMover(dprect.midbottom),
-                      G_playerbullet, *ct.ELEMENTSIZE)
-    G_player = pg.sprite.Group(S_player)
+    groupdict: Dict[str, pg.sprite.Group] = dict()
+    groupdict = {'bullet': pg.sprite.Group(),
+                 'player': pg.sprite.Group(),
+                 'danmaku': pg.sprite.Group()}
 
-    G_testBaseDanmaku1 = RadialBaseDanmaku(center, 4, 32, 0.5,
-                                           RedBlock, *ct.ELEMENTSIZE,
-                                           track=S_player)
-    G_testBaseDanmaku2 = BurstBaseDanmaku(center, 1.5, 32, 13,
-                                          BlackBlock, *ct.ELEMENTSIZE)
-    G_testBaseDanmaku3 = PlaneBaseDanmaku(dprect.midtop, 6, 50, 22,
-                                          BlackBlock, *ct.ELEMENTSIZE)
-    G_testDanmaku = pg.sprite.Group(*G_testBaseDanmaku1,
-                                    *G_testBaseDanmaku2,
-                                    *G_testBaseDanmaku3)
+    spritedict: Dict[str, Element] = dict()
+
+    parser = Parser(screenrect, groupdict, spritedict)
+    spritedict['player'] = parser.load("assets/element/player.json")
+
+    groupdict['player'].add(spritedict['player'])
+    groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test1.json"))
+    groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test2.json"))
+    groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test3.json"))
 
     while True:
         G_all_sprites = pg.sprite.Group(
-            *G_testDanmaku, *G_player, *G_playerbullet)
-        G_event_sprites = pg.sprite.Group(*G_player)
-        G_danmaku = pg.sprite.Group(*G_testDanmaku)
+            *groupdict['danmaku'], *groupdict['player'], *groupdict['bullet'])
+        G_event_sprites = pg.sprite.Group(*groupdict['player'])
 
         for event in pg.event.get():
             G_event_sprites.update(event=event)
@@ -51,7 +51,7 @@ def game() -> None:
 
         displaysurf.fill(ct.WHITE)
 
-        if pg.sprite.groupcollide(G_player, G_testDanmaku, False, False):
+        if pg.sprite.groupcollide(groupdict['player'], groupdict['danmaku'], False, False):
             print("Crashed")
 
         G_all_sprites.update()

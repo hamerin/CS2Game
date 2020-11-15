@@ -1,0 +1,14 @@
+{
+    "__type__": "Radial",
+    "pos": "__center__",
+    "vel": 4,
+    "N": 32,
+    "offset": 0.5,
+    "image": {
+        "__type__": "Block",
+        "color": "__red__",
+        "width": 10,
+        "height": 10
+    },
+    "track": "player"
+}

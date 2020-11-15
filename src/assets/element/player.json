@@ -1,0 +1,32 @@
+{
+    "__type__": "Gen",
+    "mover": {
+        "__type__": "Event",
+        "pos": "__midbottom__"
+    },
+    "image": {
+        "__type__": "Block",
+        "width": 10,
+        "height": 10,
+        "color": "__blue__"
+    },
+    "group": "bullet",
+    "danmaku": [
+        {
+            "__type__": "Burst",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": 10,
+            "vel": 10,
+            "N": 5,
+            "baseN": 32,
+            "image": {
+                "__type__": "Block",
+                "color": "__black__",
+                "width": 10,
+                "height": 10
+            },
+            "direction": 1.5
+        }
+    ]
+}
