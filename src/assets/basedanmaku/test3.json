@@ -1,13 +1,13 @@
 {
     "__type__": "Plane",
     "pos": "__midtop__",
-    "vel": 6,
-    "N": 50,
-    "sep": 22,
+    "vel": 2,
+    "N": 20,
+    "sep": 32,
     "image": {
         "__type__": "Block",
-        "color": "__black__",
-        "width": 10,
+        "color": "__bluetrack__",
+        "width": 4,
         "height": 10
     }
 }

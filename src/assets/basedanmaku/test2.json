@@ -6,8 +6,8 @@
     "N": 13,
     "image": {
         "__type__": "Block",
-        "color": "__black__",
-        "width": 10,
+        "color": "__greentrack__",
+        "width": 4,
         "height": 10
     }
 }
