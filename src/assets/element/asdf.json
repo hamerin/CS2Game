@@ -18,7 +18,7 @@
             "__wrap__": true,
             "pos": "__arg__",
             "refresh": -1,
-            "vel": 10,
+            "vel": 100,
             "N": 100,
             "offset": 0,
             "image": {
