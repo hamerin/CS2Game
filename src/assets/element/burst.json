@@ -9,7 +9,7 @@
         "__type__": "Block",
         "width": 10,
         "height": 10,
-        "color": "__magenta__"
+        "color": "__red__"
     },
     "group": "danmaku",
     "danmaku": [
@@ -18,13 +18,13 @@
             "__wrap__": true,
             "pos": "__arg__",
             "refresh": -1,
-            "vel": 10,
-            "N": 100,
+            "vel": 4,
+            "N": 30,
             "offset": 0,
             "image": {
                 "__type__": "Block",
-                "color": "__cyan__",
-                "width": 10,
+                "color": "__red__",
+                "width": 4,
                 "height": 10
             }
         }

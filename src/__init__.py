@@ -35,13 +35,20 @@ def game() -> None:
     spritedict['player'] = parser.load("assets/element/player.json")
 
     groupdict['player'].add(spritedict['player'])
-    groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test1.json"))
-    groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test2.json"))
-    groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test3.json"))
-
-    groupdict['enemy'].add(parser.load("assets/element/asdf.json"))
-
+    ##groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test1.json"))
+    ##groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test2.json"))
+    ##groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test3.json"))
+    #groupdict['enemy'].add(parser.load("assets/element/radial_follow.json"))
+    groupdict['enemy'].add(parser.load("assets/element/plane.json"))
+    _frame = 0
     while True:
+        _frame += 1
+
+        #if _frame % 60 ==0:
+        #    groupdict['enemy'].add(parser.load("assets/element/radial.json"))
+
+
+
         G_all_sprites = pg.sprite.Group(
             *groupdict['danmaku'], *groupdict['player'], *groupdict['enemy'], *groupdict['bullet'])
         G_event_sprites = pg.sprite.Group(*groupdict['player'])

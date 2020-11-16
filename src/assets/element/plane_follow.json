@@ -1,0 +1,33 @@
+{
+    "__type__": "Gen",
+    "mover": {
+        "__type__": "Velocity",
+        "pos": "__midtop__",
+        "vel": [0, 3]
+    },
+    "image": {
+        "__type__": "Block",
+        "width": 10,
+        "height": 10,
+        "color": "__greentrack__"
+    },
+    "group": "danmaku",
+    "danmaku": [
+        {
+            "__type__": "Radial",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 4,
+            "N": 30,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__greentrack__",
+                "width": 4,
+                "height": 10
+            },
+            "track": "player"
+        }
+    ]
+}
