@@ -26,6 +26,7 @@ def game() -> None:
     groupdict: Dict[str, pg.sprite.Group] = dict()
     groupdict = {'bullet': pg.sprite.Group(),
                  'player': pg.sprite.Group(),
+                 'enemy': pg.sprite.Group(),
                  'danmaku': pg.sprite.Group()}
 
     spritedict: Dict[str, Element] = dict()
@@ -38,9 +39,11 @@ def game() -> None:
     groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test2.json"))
     groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test3.json"))
 
+    groupdict['enemy'].add(parser.load("assets/element/asdf.json"))
+
     while True:
         G_all_sprites = pg.sprite.Group(
-            *groupdict['danmaku'], *groupdict['player'], *groupdict['bullet'])
+            *groupdict['danmaku'], *groupdict['player'], *groupdict['enemy'], *groupdict['bullet'])
         G_event_sprites = pg.sprite.Group(*groupdict['player'])
 
         for event in pg.event.get():
@@ -53,6 +56,8 @@ def game() -> None:
 
         if pg.sprite.groupcollide(groupdict['player'], groupdict['danmaku'], False, False):
             print("Crashed")
+
+        pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'], False, True)
 
         G_all_sprites.update()
         G_all_sprites.draw(displaysurf)
