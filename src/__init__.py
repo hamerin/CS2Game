@@ -49,8 +49,7 @@ def game() -> None:
             groupdict['enemy'].add(parser.load("assets/element/hmix.json"))
         if _frame == 400:
             groupdict['enemy'].add(parser.load("assets/element/xmix.json"))
-        if _frame == 800:
-            print(i)
+
         G_all_sprites = pg.sprite.Group(
             *groupdict['danmaku'], *groupdict['player'], *groupdict['enemy'], *groupdict['bullet'])
         G_event_sprites = pg.sprite.Group(*groupdict['player'])
@@ -64,8 +63,8 @@ def game() -> None:
         displaysurf.fill(ct.WHITE)
 
         if pg.sprite.groupcollide(groupdict['player'], groupdict['danmaku'], False, False):
-            print("Crashed")
-            i+=1
+            i+=1; print(i, "Crash")
+
         pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'], False, True)
 
         G_all_sprites.update()

@@ -4,7 +4,7 @@ import math
 WIDTH: Final[int] = 768
 HEIGHT: Final[int] = 576
 
-#WHITE: Final[Tuple[int, int, int]] = (255, 255, 255)
+WHITE: Final[Tuple[int, int, int]] = (255, 255, 255)
 BLACK: Final[Tuple[int, int, int]] = (0, 0, 0)
 RED: Final[Tuple[int, int, int]] = (140, 0, 0)
 REDTRACK: Final[Tuple[int, int, int]] = (255, 0, 128)
