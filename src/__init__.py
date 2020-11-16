@@ -13,6 +13,7 @@ from .parser import Parser
 
 
 def game() -> None:
+    i=0
     print(os.getcwd())
     pg.init()  # 초기화
 
@@ -48,7 +49,8 @@ def game() -> None:
             groupdict['enemy'].add(parser.load("assets/element/hmix.json"))
         if _frame == 400:
             groupdict['enemy'].add(parser.load("assets/element/xmix.json"))
-
+        if _frame == 800:
+            print(i)
         G_all_sprites = pg.sprite.Group(
             *groupdict['danmaku'], *groupdict['player'], *groupdict['enemy'], *groupdict['bullet'])
         G_event_sprites = pg.sprite.Group(*groupdict['player'])
@@ -63,7 +65,7 @@ def game() -> None:
 
         if pg.sprite.groupcollide(groupdict['player'], groupdict['danmaku'], False, False):
             print("Crashed")
-
+            i+=1
         pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'], False, True)
 
         G_all_sprites.update()
