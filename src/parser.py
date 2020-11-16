@@ -4,6 +4,7 @@ from typing import Dict, Any, Tuple, Union, List, Final, TypeVar, Callable
 import re
 import os
 import json
+import random
 
 import pygame as pg
 
@@ -38,7 +39,35 @@ class Parser:
         self.groupdict = groupdict
         self.spritedict = spritedict
 
-    def parseColor(self, data: Union[List[int], str]) -> Tuple[int, int, int]:
+    def _parseRandom(self, mode: str) -> Vector:
+        w = self.screenrect.width
+        h = self.screenrect.height
+        rx = random.randint(0, w)
+        ry = random.randint(0, h)
+        mx = w // 2
+        my = h // 2
+
+        if mode == 'random':
+            return Vector(rx, ry)
+
+        elif mode == 'rdleft':
+            return Vector(0, ry)
+        elif mode == 'rdright':
+            return Vector(w, ry)
+        elif mode == 'rdtop':
+            return Vector(rx, 0)
+        elif mode == 'rdbottom':
+            return Vector(rx, h)
+
+        elif mode == 'rdmidx':
+            return Vector(mx, ry)
+        elif mode == 'rdmidy':
+            return Vector(rx, my)
+
+        else:
+            raise ValueError
+
+    def _parseColor(self, data: Union[List[int], str]) -> Tuple[int, int, int]:
         st: str
         ret: Tuple[int, int, int]
 
@@ -76,10 +105,13 @@ class Parser:
 
         raise ValueError
 
-    def parsePosition(self, data: Union[str, List[Union[int, float]]]) -> Vector:
+    def _parsePosition(self, data: Union[str, List[Union[int, float]]]) -> Vector:
         _allow: Final[List[str]] = ['topleft', 'bottomleft', 'topright', 'bottomright',
                                     'midtop', 'midleft', 'midbottom', 'midright',
                                     'center']
+        _allow_rd: Final[List[str]] = ['random',
+                                       'rdleft', 'rdright', 'rdtop', 'rdbottom',
+                                       'rdmidx', 'rdmidy']
 
         st: str
 
@@ -87,11 +119,13 @@ class Parser:
             if match := re.search(r'(?<=__).*(?=__)', data):
                 st = match.group().lower()
 
-                if not st in _allow:
-                    raise ValueError
+                if st in _allow:
+                    coor: Tuple[int, int] = getattr(self.screenrect, st)
+                    return parseVector(coor)
+                if st in _allow_rd:
+                    return self._parseRandom(st)
 
-                coor: Tuple[int, int] = getattr(self.screenrect, st)
-                return parseVector(coor)
+                raise ValueError
 
         elif isinstance(data, list):
             if len(data) != 2:
@@ -144,7 +178,7 @@ class Parser:
                     continue
 
                 tmp = data[name]
-                print(tmp)
+                # print(tmp)
 
                 if tmp == "__arg__":
                     continue
@@ -177,9 +211,9 @@ class Parser:
                     tmp = self.spritedict[tmp]
 
                 if param.annotation in ("Coordinate",):
-                    tmp = self.parsePosition(tmp)
+                    tmp = self._parsePosition(tmp)
                 if param.annotation in ("Tuple[int, int, int]",):
-                    tmp = self.parseColor(tmp)
+                    tmp = self._parseColor(tmp)
 
                 if param.default == Parameter.empty:
                     args.append(tmp)
@@ -187,9 +221,9 @@ class Parser:
                     kwargs.update({name: tmp})
 
         if not wrap:
-            print(elem)
-            print(*args)
-            print(*kwargs.items())
+            # print(elem)
+            # print(*args)
+            # print(*kwargs.items())
             return elem(*args, **kwargs)
         else:
             return lambda *wrap_args: elem(*wrap_args, *args, **kwargs)

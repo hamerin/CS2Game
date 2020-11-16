@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-from typing import Final, Tuple, Dict
+from typing import Final, Tuple, Dict, List
 
 import pygame as pg
 from . import constant as ct
@@ -12,9 +12,24 @@ from .image import BlockImage
 from .parser import Parser
 
 
+def prompt_difficulty() -> str:
+    _allow: List[str] = ['e', 'easy', 'n', 'normal', 'h', 'hard', 'x', 'extra']
+
+    inp = input("Difficulty: ")
+
+    if not inp in _allow:
+        raise ValueError
+
+    idx = _allow.index(inp)
+    if idx % 2 == 0:
+        idx += 1
+
+    return _allow[idx]
+
+
 def game() -> None:
-    i=0
-    print(os.getcwd())
+    diff = prompt_difficulty()
+
     pg.init()  # 초기화
 
     pg.display.set_caption('Hello, world!')
@@ -32,23 +47,16 @@ def game() -> None:
     spritedict: Dict[str, Element] = dict()
 
     parser = Parser(screenrect, groupdict, spritedict)
-    spritedict['player'] = parser.load("assets/element/player.json")
+    spritedict['player'] = parser.load("assets/player.json")
 
     groupdict['player'].add(spritedict['player'])
-    #groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test1.json"))
-    #groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test2.json"))
-    #groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test3.json"))
+
     _frame = 0
+    _crashed = 0
     while True:
         _frame += 1
-        if _frame == 100:
-            groupdict['enemy'].add(parser.load("assets/element/emix.json"))
-        if _frame == 200:
-            groupdict['enemy'].add(parser.load("assets/element/nmix.json"))
-        if _frame == 300:
-            groupdict['enemy'].add(parser.load("assets/element/hmix.json"))
-        if _frame == 400:
-            groupdict['enemy'].add(parser.load("assets/element/xmix.json"))
+        if _frame % 200 == 0:
+            groupdict['enemy'].add(parser.load(f"assets/{diff}/mix.json"))
 
         G_all_sprites = pg.sprite.Group(
             *groupdict['danmaku'], *groupdict['player'], *groupdict['enemy'], *groupdict['bullet'])
@@ -63,9 +71,11 @@ def game() -> None:
         displaysurf.fill(ct.WHITE)
 
         if pg.sprite.groupcollide(groupdict['player'], groupdict['danmaku'], False, False):
-            i+=1; print(i, "Crash")
+            _crashed += 1
+            print(f"Crashed {_crashed} times")
 
-        pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'], False, True)
+        pg.sprite.groupcollide(
+            groupdict['bullet'], groupdict['enemy'], False, True)
 
         G_all_sprites.update()
         G_all_sprites.draw(displaysurf)
