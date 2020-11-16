@@ -7,27 +7,27 @@
     },
     "image": {
         "__type__": "Block",
-        "width": 10,
-        "height": 10,
-        "color": "__greentrack__"
+        "width": 12,
+        "height": 12,
+        "color": "__red__"
     },
     "group": "danmaku",
     "danmaku": [
         {
-            "__type__": "Radial",
+            "__type__": "Burst",
             "__wrap__": true,
             "pos": "__arg__",
             "refresh": -1,
-            "vel": 4,
-            "N": 30,
+            "vel": 3,
+            "baseN": 30,
+            "N": 8,
             "offset": 0,
             "image": {
                 "__type__": "Block",
-                "color": "__greentrack__",
-                "width": 4,
-                "height": 10
-            },
-            "track": "player"
+                "color": "__red__",
+                "width": 5,
+                "height": 12
+            }
         }
     ]
 }

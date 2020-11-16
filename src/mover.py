@@ -95,7 +95,7 @@ class TrackingMover(VelocityMover):
     maxDeg: Final[float] = 2 * math.pi / 360
     minDot: Final[float] = getHat(0) @ getHat(maxDeg)
     trackTime: Final[float] = 16
-    maxtrackTime: Final[float] = 6
+    maxtrackTime: Final[float] = 5
 
     def __init__(self, pos: Coordinate, vel: Coordinate, toTrack: Mover):
         super().__init__(pos, vel)

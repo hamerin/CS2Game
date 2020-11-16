@@ -1,0 +1,65 @@
+{
+    "__type__": "Gen",
+    "mover": {
+        "__type__": "Velocity",
+        "pos": "__midtop__",
+        "vel": [0, 3]
+    },
+    "image": {
+        "__type__": "Block",
+        "width": 12,
+        "height": 12,
+        "color": "__black__"
+    },
+    "group": "danmaku",
+    "danmaku": [
+        {
+            "__type__": "Burst",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 3.5,
+            "baseN": 40,
+            "N": 16,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__red__",
+                "width": 4,
+                "height": 10
+            }
+        },
+        {
+            "__type__": "Plane",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 3.5,
+            "sep": 48,
+            "N": 15,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__green__",
+                "width": 4,
+                "height": 10
+            }
+        },
+        {
+            "__type__": "Radial",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 2.5,
+            "N": 18,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__bluetrack__",
+                "width": 4,
+                "height": 10
+            },
+            "track": "player"
+        }
+    ]
+}

@@ -4,7 +4,6 @@ import json
 from typing import Final, Tuple, Dict
 
 import pygame as pg
-
 from . import constant as ct
 from .element import Element
 from .mover import AccelerationMover, EventMover
@@ -35,19 +34,20 @@ def game() -> None:
     spritedict['player'] = parser.load("assets/element/player.json")
 
     groupdict['player'].add(spritedict['player'])
-    ##groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test1.json"))
-    ##groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test2.json"))
-    ##groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test3.json"))
-    #groupdict['enemy'].add(parser.load("assets/element/radial_follow.json"))
-    groupdict['enemy'].add(parser.load("assets/element/plane.json"))
+    #groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test1.json"))
+    #groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test2.json"))
+    #groupdict['danmaku'].add(*parser.load("assets/basedanmaku/test3.json"))
     _frame = 0
     while True:
         _frame += 1
-
-        #if _frame % 60 ==0:
-        #    groupdict['enemy'].add(parser.load("assets/element/radial.json"))
-
-
+        if _frame == 100:
+            groupdict['enemy'].add(parser.load("assets/element/emix.json"))
+        if _frame == 200:
+            groupdict['enemy'].add(parser.load("assets/element/nmix.json"))
+        if _frame == 300:
+            groupdict['enemy'].add(parser.load("assets/element/hmix.json"))
+        if _frame == 400:
+            groupdict['enemy'].add(parser.load("assets/element/xmix.json"))
 
         G_all_sprites = pg.sprite.Group(
             *groupdict['danmaku'], *groupdict['player'], *groupdict['enemy'], *groupdict['bullet'])

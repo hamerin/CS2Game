@@ -1,0 +1,32 @@
+{
+    "__type__": "Gen",
+    "mover": {
+        "__type__": "Velocity",
+        "pos": "__midtop__",
+        "vel": [0, 3]
+    },
+    "image": {
+        "__type__": "Block",
+        "width": 12,
+        "height": 12,
+        "color": "__blue__"
+    },
+    "group": "danmaku",
+    "danmaku": [
+        {
+            "__type__": "Radial",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 3,
+            "N": 10,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__blue__",
+                "width": 5,
+                "height": 12
+            }
+        }
+    ]
+}

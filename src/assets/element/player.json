@@ -6,9 +6,9 @@
     },
     "image": {
         "__type__": "Block",
-        "width": 10,
-        "height": 10,
-        "color": "__blue__"
+        "width": 4,
+        "height": 4,
+        "color": "__black__"
     },
     "group": "bullet",
     "danmaku": [
@@ -17,14 +17,14 @@
             "__wrap__": true,
             "pos": "__arg__",
             "refresh": 10,
-            "vel": 12,
+            "vel": 10,
             "N": 5,
-            "baseN": 36,
+            "baseN": 72,
             "image": {
                 "__type__": "Block",
                 "color": "__black__",
-                "width": 4,
-                "height": 10
+                "width": 6,
+                "height": 8
             },
             "direction": 1.5
         }
