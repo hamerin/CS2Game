@@ -68,18 +68,21 @@ def game() -> None:
             groupdict['enemy'].add(parser.load(f"assets/{diff}/burst.json"))
             groupdict['enemy'].add(parser.load(f"assets/{diff}/plane.json"))
             groupdict['enemy'].add(parser.load(f"assets/{diff}/radial.json"))
-    _frame , _crashed, _limittime = 0 , 0, 90
+    _frame , _crashed, _limittime, onon = 0 , 0, 80, 0
 
     while True:
         _frame += 1
-        if _frame == _limittime//1:
+        if _frame == _limittime // 1 and onon == 0:
             enemychoose()
-            _limittime-=0.7
-            _frame=0
+            _frame = 0
             print(_limittime)
-        if _limittime < 0:
-            if _frame > 300:
-                #게임 종료 후 점수 기록
+            if _limittime > 10: _limittime -= 0.7
+            if _limittime <= 10: onon = 1
+
+        if onon == 1:
+            if _frame == 450:
+                pg.quit()
+                sys.exit()
 
         G_all_sprites = pg.sprite.Group(
             *groupdict['danmaku'], *groupdict['player'], *groupdict['enemy'], *groupdict['bullet'])
