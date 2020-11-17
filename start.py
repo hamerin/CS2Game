@@ -1,3 +1,2 @@
 from src import game
-
-game()
+game()      #게임

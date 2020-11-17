@@ -4,7 +4,7 @@ from typing import Any
 import pygame as pg
 
 from .mover import Mover
-from .helpers import get_actual
+from .helpers import get_actual  # 함수 불러오기
 
 
 class Element(pg.sprite.Sprite):

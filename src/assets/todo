@@ -1,0 +1,11 @@
+점수판 구현(난이도별)
+적이 바닥에 닿으면 카운트 +100
+
+주석 해야할 것
+helpers init
+basedanmaku
+element
+generator
+image
+mover:  110~122
+parser

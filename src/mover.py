@@ -6,7 +6,7 @@ import math
 import pygame as pg
 
 from . import constant as ct
-from .helpers.vector import Coordinate, parseVector, Vector, getHat
+from .helpers.vector import Coordinate, parseVector, Vector, getHat  # 보조 함수 불러오기
 
 
 class Mover:
@@ -18,7 +18,7 @@ class Mover:
     def advance(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._frame += 1
 
-    def in_bound(self) -> bool:
+    def in_bound(self) -> bool:  # 경계에 닿았는지
         return 0 <= self.pos[0] <= ct.WIDTH and 0 <= self.pos[1] <= ct.HEIGHT
 
     def as_tuple(self) -> Sequence[float]:
@@ -28,7 +28,7 @@ class Mover:
         return self.pos.as_trimmed_tuple()
 
 
-def restrict(fun: Callable[..., None]) -> Callable[..., None]:
+def restrict(fun: Callable[..., None]) -> Callable[..., None]:  # 플레이어 동작 구역 제한
     def decorated(self: Mover, *args: Any, **kwargs: Any) -> None:
         lastpos = self.pos
         fun(self, *args, **kwargs)
@@ -39,7 +39,7 @@ def restrict(fun: Callable[..., None]) -> Callable[..., None]:
     return decorated
 
 
-class VelocityMover(Mover):
+class VelocityMover(Mover):  # 속도 벡터
     def __init__(self, pos: Coordinate, vel: Coordinate):
         super().__init__(pos)
         self.vel = parseVector(vel)
@@ -49,7 +49,7 @@ class VelocityMover(Mover):
         super().advance(*args, **kwargs)
 
 
-class AccelerationMover(VelocityMover):
+class AccelerationMover(VelocityMover):  # 가속도 벡터
     def __init__(self, pos: Coordinate, vel: Coordinate, acc: Coordinate):
         super().__init__(pos, vel)
         self.acc = parseVector(acc)
@@ -59,30 +59,30 @@ class AccelerationMover(VelocityMover):
         super().advance(*args, **kwargs)
 
 
-class EventMover(VelocityMover):
-    amplifier: float = 2.5
+class EventMover(VelocityMover):  # 플레이어 속력 정의
+    amplifier: float = 2.5  # 쉬프트 없을 때 배속
 
     def __init__(self, pos: Coordinate):
         super().__init__(pos, (0, 0))
-        self.magnitude: float = 4.8
+        self.magnitude: float = 4.8  # 플레이어 속력/프레임
 
-    @restrict
+    @restrict  # 구역 제한
     def advance(self, *args: Any, **kwargs: Any) -> None:
         if 'event' in kwargs:
             e: pg.event.Event = kwargs['event']
             dic: Dict[int, Vector] = {pg.K_UP: Vector(0, -1),
                                       pg.K_LEFT: Vector(-1, 0),
                                       pg.K_DOWN: Vector(0, 1),
-                                      pg.K_RIGHT: Vector(1, 0)}
+                                      pg.K_RIGHT: Vector(1, 0)}  # 이동 방향 결정
 
-            if e.type == pg.KEYDOWN:
-                if e.key == pg.K_LSHIFT:
+            if e.type == pg.KEYDOWN:  # 방향키 눌렀을 때
+                if e.key == pg.K_LSHIFT:  # 쉬프트 누르면 속력 감소
                     self.magnitude /= EventMover.amplifier
                     self.vel /= EventMover.amplifier
                 else:
                     self.vel += dic.get(e.key, Vector(0, 0)) * self.magnitude
             elif e.type == pg.KEYUP:
-                if e.key == pg.K_LSHIFT:
+                if e.key == pg.K_LSHIFT:  # 쉬프트 떼면 속력 증가
                     self.magnitude *= EventMover.amplifier
                     self.vel *= EventMover.amplifier
                 else:
@@ -91,11 +91,11 @@ class EventMover(VelocityMover):
             super().advance(*args, **kwargs)
 
 
-class TrackingMover(VelocityMover):
-    maxDeg: Final[float] = 2 * math.pi / 360
+class TrackingMover(VelocityMover):  # 유도
+    maxDeg: Final[float] = 2 * math.pi / 360  # 최대,최소 트는 각
     minDot: Final[float] = getHat(0) @ getHat(maxDeg)
-    trackTime: Final[float] = 16
-    maxtrackTime: Final[float] = 2
+    trackTime: Final[float] = 16  # 방향 트는 시간간견
+    maxtrackTime: Final[float] = 2  # 실질 따라오는 시간
 
     def __init__(self, pos: Coordinate, vel: Coordinate, toTrack: Mover):
         super().__init__(pos, vel)
@@ -105,7 +105,7 @@ class TrackingMover(VelocityMover):
         self.toFollow = toTrack
 
         self._followframe: Final[float] = min(TrackingMover.maxtrackTime,
-                                              TrackingMover.trackTime / self.vsize) * ct.FPS
+                                              TrackingMover.trackTime / self.vsize) * ct.FPS  # 플레이어를 향해 움직임
 
     def advance(self, *args: Any, **kwargs: Any) -> None:
         if self._frame <= self._followframe:
