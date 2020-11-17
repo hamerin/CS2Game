@@ -2,7 +2,7 @@
     "__type__": "Gen",
     "mover": {
         "__type__": "Velocity",
-        "pos": "__midtop__",
+        "pos": "__rdtop__",
         "vel": [0, 2]
     },
     "image": {
@@ -19,8 +19,8 @@
             "pos": "__arg__",
             "refresh": -1,
             "vel": 4,
-            "baseN": 90,
-            "N": 42,
+            "baseN": 60,
+            "N": 28,
             "offset": 0,
             "image": {
                 "__type__": "Block",
@@ -35,8 +35,8 @@
             "pos": "__arg__",
             "refresh": -1,
             "vel": 3.9,
-            "baseN": 120,
-            "N": 73,
+            "baseN": 80,
+            "N": 36,
             "offset": 0.1,
             "image": {
                 "__type__": "Block",
@@ -51,8 +51,8 @@
             "pos": "__arg__",
             "refresh": -1,
             "vel": 3.8,
-            "baseN": 108,
-            "N": 66,
+            "baseN": 54,
+            "N": 26,
             "offset": 0.2,
             "image": {
                 "__type__": "Block",
@@ -67,8 +67,8 @@
             "pos": "__arg__",
             "refresh": -1,
             "vel": 3.7,
-            "baseN": 114,
-            "N": 69,
+            "baseN": 66,
+            "N": 30,
             "offset": 0.1,
             "image": {
                 "__type__": "Block",
@@ -82,8 +82,8 @@
             "pos": "__arg__",
             "refresh": -1,
             "vel": 3.6,
-            "baseN": 96,
-            "N": 46,
+            "baseN": 48,
+            "N": 23,
             "offset": 0,
             "image": {
                 "__type__": "Block",

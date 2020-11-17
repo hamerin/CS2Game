@@ -2,7 +2,7 @@
     "__type__": "Gen",
     "mover": {
         "__type__": "Velocity",
-        "pos": "__midtop__",
+        "pos": "__rdtop__",
         "vel": [0, 3]
     },
     "image": {
@@ -18,14 +18,14 @@
             "__wrap__": true,
             "pos": "__arg__",
             "refresh": -1,
-            "vel": 2.5,
-            "N": 18,
+            "vel": 2,
+            "N": 10,
             "offset": 0,
             "image": {
                 "__type__": "Block",
                 "color": "__bluetrack__",
-                "width": 4,
-                "height": 10
+                "width": 5,
+                "height": 12
             },
             "track": "player"
         }

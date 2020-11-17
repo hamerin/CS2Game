@@ -2,8 +2,8 @@
     "__type__": "Gen",
     "mover": {
         "__type__": "Velocity",
-        "pos": "__midtop__",
-        "vel": [0, 3]
+        "pos": "__rdtop__",
+        "vel": [0, 2]
     },
     "image": {
         "__type__": "Block",
@@ -19,8 +19,8 @@
             "pos": "__arg__",
             "refresh": -1,
             "vel": 3,
-            "baseN": 30,
-            "N": 8,
+            "baseN": 15,
+            "N": 6,
             "offset": 0,
             "image": {
                 "__type__": "Block",

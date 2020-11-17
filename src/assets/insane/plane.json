@@ -9,24 +9,24 @@
         "__type__": "Block",
         "width": 12,
         "height": 12,
-        "color": "__black__"
+        "color": "__green__"
     },
     "group": "danmaku",
     "danmaku": [
         {
-            "__type__": "Burst",
+            "__type__": "Plane",
             "__wrap__": true,
             "pos": "__arg__",
             "refresh": -1,
-            "vel": 3,
-            "baseN": 15,
-            "N": 6,
+            "vel": 4,
+            "sep": 30,
+            "N": 25,
             "offset": 0,
             "image": {
                 "__type__": "Block",
-                "color": "__red__",
-                "width": 5,
-                "height": 12
+                "color": "__green__",
+                "width": 4,
+                "height": 10
             }
         },
         {
@@ -34,47 +34,32 @@
             "__wrap__": true,
             "pos": "__arg__",
             "refresh": -1,
-            "vel": 3,
-            "sep": 60,
-            "N": 5,
+            "vel": 3.8,
+            "sep": 30,
+            "N": 25,
             "offset": 0,
             "image": {
                 "__type__": "Block",
                 "color": "__green__",
-                "width": 5,
-                "height": 12
+                "width": 4,
+                "height": 10
             }
         },
         {
-            "__type__": "Radial",
+            "__type__": "Plane",
             "__wrap__": true,
             "pos": "__arg__",
             "refresh": -1,
-            "vel": 3,
-            "N": 12,
+            "vel": 3.6,
+            "sep": 28,
+            "N": 25,
             "offset": 0,
             "image": {
                 "__type__": "Block",
-                "color": "__blue__",
-                "width": 5,
-                "height": 12
+                "color": "__green__",
+                "width": 4,
+                "height": 10
             }
-        },
-        {
-            "__type__": "Radial",
-            "__wrap__": true,
-            "pos": "__arg__",
-            "refresh": -1,
-            "vel": 2,
-            "N": 8,
-            "offset": 0,
-            "image": {
-                "__type__": "Block",
-                "color": "__bluetrack__",
-                "width": 5,
-                "height": 12
-            },
-            "track": "player"
         }
     ]
 }

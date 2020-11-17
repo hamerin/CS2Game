@@ -60,11 +60,11 @@ class AccelerationMover(VelocityMover):
 
 
 class EventMover(VelocityMover):
-    amplifier: float = 4
+    amplifier: float = 2.5
 
     def __init__(self, pos: Coordinate):
         super().__init__(pos, (0, 0))
-        self.magnitude: float = 4
+        self.magnitude: float = 4.8
 
     @restrict
     def advance(self, *args: Any, **kwargs: Any) -> None:
@@ -95,7 +95,7 @@ class TrackingMover(VelocityMover):
     maxDeg: Final[float] = 2 * math.pi / 360
     minDot: Final[float] = getHat(0) @ getHat(maxDeg)
     trackTime: Final[float] = 16
-    maxtrackTime: Final[float] = 5
+    maxtrackTime: Final[float] = 2
 
     def __init__(self, pos: Coordinate, vel: Coordinate, toTrack: Mover):
         super().__init__(pos, vel)

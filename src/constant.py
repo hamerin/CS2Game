@@ -1,8 +1,8 @@
 from typing import Final, Tuple
 import math
 
-WIDTH: Final[int] = 768
-HEIGHT: Final[int] = 576
+WIDTH: Final[int] = 512
+HEIGHT: Final[int] = 768
 
 WHITE: Final[Tuple[int, int, int]] = (255, 255, 255)
 BLACK: Final[Tuple[int, int, int]] = (0, 0, 0)

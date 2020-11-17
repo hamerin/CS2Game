@@ -3,6 +3,8 @@ import sys
 import json
 from typing import Final, Tuple, Dict, List
 
+import random
+
 import pygame as pg
 from . import constant as ct
 from .element import Element
@@ -11,25 +13,20 @@ from .basedanmaku import RadialBaseDanmaku, BurstBaseDanmaku, PlaneBaseDanmaku
 from .image import BlockImage
 from .parser import Parser
 
-
 def prompt_difficulty() -> str:
-    _allow: List[str] = ['e', 'easy', 'n', 'normal', 'h', 'hard', 'x', 'extra']
-
-    inp = input("Difficulty: ")
+    _allow: List[str] = ['e', 'easy', 'n', 'normal', 'h', 'hard', 'i', 'insane', 'x', 'extra']
+    inp = input("select difficulty /n e: easy  n: normal  h: hard  i: insane  x: extra /n Difficulty: ")
 
     if not inp in _allow:
         raise ValueError
-
     idx = _allow.index(inp)
     if idx % 2 == 0:
         idx += 1
 
     return _allow[idx]
 
-
 def game() -> None:
     diff = prompt_difficulty()
-
     pg.init()  # 초기화
 
     pg.display.set_caption('Hello, world!')
@@ -51,12 +48,38 @@ def game() -> None:
 
     groupdict['player'].add(spritedict['player'])
 
-    _frame = 0
-    _crashed = 0
+    def enemychoose():
+        nn = random.randrange(21)
+        if nn == 0: groupdict['enemy'].add(parser.load(f"assets/{diff}/mix.json"))
+        if 1 <= nn and nn <= 3: groupdict['enemy'].add(parser.load(f"assets/{diff}/burst.json"))
+        if 4 <= nn and nn <= 6: groupdict['enemy'].add(parser.load(f"assets/{diff}/plane.json"))
+        if 7 <= nn and nn <= 9: groupdict['enemy'].add(parser.load(f"assets/{diff}/radial.json"))
+        if nn // 2 == 5: groupdict['enemy'].add(parser.load(f"assets/{diff}/burst_follow.json"))
+        if nn // 2 == 6: groupdict['enemy'].add(parser.load(f"assets/{diff}/plane_follow.json"))
+        if nn // 2 == 7: groupdict['enemy'].add(parser.load(f"assets/{diff}/radial_follow.json"))
+        if nn == 16: groupdict['enemy'].add(parser.load(f"assets/{diff}/burst.json")); groupdict['enemy'].add(
+            parser.load(f"assets/{diff}/radial.json"))
+        if nn == 17: groupdict['enemy'].add(parser.load(f"assets/{diff}/burst.json")); groupdict['enemy'].add(
+            parser.load(f"assets/{diff}/plane.json"))
+        if nn == 18: groupdict['enemy'].add(parser.load(f"assets/{diff}/plane.json")); groupdict['enemy'].add(
+            parser.load(f"assets/{diff}/radial.json"))
+        if nn == 19: pass
+        if nn == 20:
+            groupdict['enemy'].add(parser.load(f"assets/{diff}/burst.json"))
+            groupdict['enemy'].add(parser.load(f"assets/{diff}/plane.json"))
+            groupdict['enemy'].add(parser.load(f"assets/{diff}/radial.json"))
+    _frame , _crashed, _limittime = 0 , 0, 90
+
     while True:
         _frame += 1
-        if _frame % 200 == 0:
-            groupdict['enemy'].add(parser.load(f"assets/{diff}/mix.json"))
+        if _frame == _limittime//1:
+            enemychoose()
+            _limittime-=0.7
+            _frame=0
+            print(_limittime)
+        if _limittime < 0:
+            if _frame > 300:
+                #게임 종료 후 점수 기록
 
         G_all_sprites = pg.sprite.Group(
             *groupdict['danmaku'], *groupdict['player'], *groupdict['enemy'], *groupdict['bullet'])
