@@ -1,8 +1,6 @@
 from typing import Final, Tuple
 import math
 
-import pygame as pg
-
 WIDTH: Final[int] = 512     #너비
 HEIGHT: Final[int] = 768    #높이
 
@@ -19,9 +17,11 @@ PI: Final[float] = math.pi      #3.1415
 ELEMENTSIZE: Final[Tuple[int, int]] = (10, 10)      #객체 기본 크기
 FPS: Final[int] = 60        #FPS
 
-pg.mixer.init()
-#F_BGM = open("audio/bgm.mp3", "r")
-#S_GOTHIT: Final[pg.mixer.Sound] = pg.mixer.Sound("audio/gothit.wav")
-#S_MATCHED: Final[pg.mixer.Sound] = pg.mixer.Sound("audio/matched.wav")
-#S_TOUCHDOWN: Final[pg.mixer.Sound] = pg.mixer.Sound("audio/touchdown.wav")
+PENALTY: Final[int] = 80
+LIMITTIME: Final[float] = 80
+LIMITREDUCE: Final[float] = 0.6
+OVERLIMIT: Final[float] = 10
+OVERTIME: Final[int] = 450
 
+PATTERNDIR: Final[str] = 'assets'
+AUDIODIR: Final[str] = 'audio'

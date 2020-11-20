@@ -1,8 +1,8 @@
 from __future__ import annotations
 from inspect import signature, Parameter, _ParameterKind
 from typing import Dict, Any, Tuple, Union, List, Final, TypeVar, Callable
+from pathlib import Path
 import re
-import os
 import json
 import random
 
@@ -106,12 +106,12 @@ class Parser:
         raise ValueError
 
     def _parsePosition(self, data: Union[str, List[Union[int, float]]]) -> Vector:
-        _allow: Final[List[str]] = ['topleft', 'bottomleft', 'topright', 'bottomright',
-                                    'midtop', 'midleft', 'midbottom', 'midright',
-                                    'center']
-        _allow_rd: Final[List[str]] = ['random',
-                                       'rdleft', 'rdright', 'rdtop', 'rdbottom',
-                                       'rdmidx', 'rdmidy']
+        allow: Final[List[str]] = ['topleft', 'bottomleft', 'topright', 'bottomright',
+                                   'midtop', 'midleft', 'midbottom', 'midright',
+                                   'center']
+        allow_rd: Final[List[str]] = ['random',
+                                      'rdleft', 'rdright', 'rdtop', 'rdbottom',
+                                      'rdmidx', 'rdmidy']
 
         st: str
 
@@ -119,10 +119,10 @@ class Parser:
             if match := re.search(r'(?<=__).*(?=__)', data):
                 st = match.group().lower()
 
-                if st in _allow:
+                if st in allow:
                     coor: Tuple[int, int] = getattr(self.screenrect, st)
                     return parseVector(coor)
-                if st in _allow_rd:
+                if st in allow_rd:
                     return self._parseRandom(st)
 
                 raise ValueError
@@ -226,14 +226,15 @@ class Parser:
             # print(*kwargs.items())
             return elem(*args, **kwargs)
         else:
-            return lambda *wrap_args: elem(*wrap_args, *args, **kwargs)
+            def ret(*wrap_args: Any) -> Any:
+                return elem(*wrap_args, *args, **kwargs)
+            return ret
 
     def load(self, rel_path: str) -> Any:
-        script_dir = os.path.dirname(__file__)
-        abs_path = os.path.join(script_dir, rel_path)
+        path: Path = Path.cwd() / rel_path
 
         ret: Any = None
-        with open(abs_path, "r") as f:
+        with path.open() as f:
             ret = self.parse(json.loads(f.read()))
 
         return ret

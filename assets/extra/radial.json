@@ -1,0 +1,89 @@
+{
+    "__type__": "Gen",
+    "mover": {
+        "__type__": "Velocity",
+        "pos": "__rdtop__",
+        "vel": [0, 2]
+    },
+    "image": {
+        "__type__": "Block",
+        "width": 12,
+        "height": 12,
+        "color": "__blue__"
+    },
+    "group": "danmaku",
+    "danmaku": [
+        {
+            "__type__": "Radial",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 4.5,
+            "N": 60,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__blue__",
+                "width": 3,
+                "height": 8
+            }
+        },
+        {
+            "__type__": "Radial",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 4.4,
+            "N": 72,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__blue__",
+                "width": 3,
+                "height": 8
+            }
+        },{
+            "__type__": "Radial",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 4.3,
+            "N": 66,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__blue__",
+                "width": 3,
+                "height": 8
+            }
+        },{
+            "__type__": "Radial",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 4.2,
+            "N": 78,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__blue__",
+                "width": 3,
+                "height": 8
+            }
+        },{
+            "__type__": "Radial",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 4.1,
+            "N": 90,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__blue__",
+                "width": 3,
+                "height": 8
+            }
+        }
+    ]
+}
