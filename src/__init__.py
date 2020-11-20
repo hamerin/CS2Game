@@ -24,7 +24,7 @@ def prompt_difficulty() -> str:  # 난이도 입력(한글자)
 def game() -> None:  # 본체
     diff = prompt_difficulty()  # 난이도 불러오기
     pg.init()  # 초기화
-
+    pg.mixer.init()
     pg.display.set_caption('막장 피하기 슈팅')  # 제목
     displaysurf = pg.display.set_mode((ct.WIDTH, ct.HEIGHT), 0, 32)  # 게임 크기 설정
     clock = pg.time.Clock()  # 시간 설정
@@ -64,8 +64,9 @@ def game() -> None:  # 본체
 
     _frame , _crashed, _limittime, onon = 0 , 0, 80, 0  # 변수 결정
 
-
-    pg.mixer.Sound.play(pg.mixer.Sound('audio/bgm.mp3'))
+    BGM = pg.mixer.Sound('audio/bgm.mp3')
+    BGM.set_volume(0.5)
+    pg.mixer.Sound.play(BGM)
 
     while True:  # 게임 구동기
         _frame += 1  # 시간 증가
