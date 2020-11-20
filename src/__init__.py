@@ -2,9 +2,7 @@ import os
 import sys
 import json
 from typing import Final, Tuple, Dict, List
-
 import random
-
 import pygame as pg
 from . import constant as ct
 from .element import Element
@@ -20,9 +18,7 @@ def prompt_difficulty() -> str:  # 난이도 입력(한글자)
     if not inp in _allow:  # 다른 글자 들어오면 에러
         raise ValueError
     idx = _allow.index(inp)
-    if idx % 2 == 0:
-        idx += 1
-
+    if idx % 2 == 0: idx += 1
     return _allow[idx]
 
 def game() -> None:  # 본체
@@ -42,18 +38,16 @@ def game() -> None:  # 본체
                  'danmaku': pg.sprite.Group()}
 
     spritedict: Dict[str, Element] = dict()
-
     parser = Parser(screenrect, groupdict, spritedict)  # 패턴 구문분석
     spritedict['player'] = parser.load("assets/player.json")
-
     groupdict['player'].add(spritedict['player'])  #플레이어 추가
 
     def enemychoose():  # 랜덤 적 생성기
         nn = random.randrange(21)   # 경우 별 출현 적
         if nn == 0: groupdict['enemy'].add(parser.load(f"assets/{diff}/mix.json"))
-        if 1 <= nn and nn <= 3: groupdict['enemy'].add(parser.load(f"assets/{diff}/burst.json"))
-        if 4 <= nn and nn <= 6: groupdict['enemy'].add(parser.load(f"assets/{diff}/plane.json"))
-        if 7 <= nn and nn <= 9: groupdict['enemy'].add(parser.load(f"assets/{diff}/radial.json"))
+        if 1 <= nn <= 3: groupdict['enemy'].add(parser.load(f"assets/{diff}/burst.json"))
+        if 4 <= nn <= 6: groupdict['enemy'].add(parser.load(f"assets/{diff}/plane.json"))
+        if 7 <= nn <= 9: groupdict['enemy'].add(parser.load(f"assets/{diff}/radial.json"))
         if nn // 2 == 5: groupdict['enemy'].add(parser.load(f"assets/{diff}/burst_follow.json"))
         if nn // 2 == 6: groupdict['enemy'].add(parser.load(f"assets/{diff}/plane_follow.json"))
         if nn // 2 == 7: groupdict['enemy'].add(parser.load(f"assets/{diff}/radial_follow.json"))
@@ -63,20 +57,23 @@ def game() -> None:  # 본체
             parser.load(f"assets/{diff}/plane.json"))
         if nn == 18: groupdict['enemy'].add(parser.load(f"assets/{diff}/plane.json")); groupdict['enemy'].add(
             parser.load(f"assets/{diff}/radial.json"))
-        if nn == 19: pass
-        if nn == 20:
+        if nn == 19:
             groupdict['enemy'].add(parser.load(f"assets/{diff}/burst.json"))
             groupdict['enemy'].add(parser.load(f"assets/{diff}/plane.json"))
             groupdict['enemy'].add(parser.load(f"assets/{diff}/radial.json"))
+
     _frame , _crashed, _limittime, onon = 0 , 0, 80, 0  # 변수 결정
+
+
+    pg.mixer.Sound.play(pg.mixer.Sound('audio/bgm.mp3'))
 
     while True:  # 게임 구동기
         _frame += 1  # 시간 증가
+
         if _frame == _limittime // 1 and onon == 0:  # 게임 중 적 생성 시간일 때
             enemychoose()  # 적 생성
             _frame = 0  # 적 생성 시간 초기화
-            print(_limittime)
-            if _limittime > 10: _limittime -= 0.7  # 적 생성 주기 단축
+            if _limittime > 10: _limittime -= 0.6  # 적 생성 주기 단축
             if _limittime <= 10: onon = 1  # 게임 종료 시간
 
         if onon == 1:  # 게임 끝
@@ -95,15 +92,14 @@ def game() -> None:  # 본체
                 sys.exit()
 
         displaysurf.fill(ct.WHITE)  # 배경 색
-
         if pg.sprite.groupcollide(groupdict['player'], groupdict['danmaku'], False, False):
             _crashed += 1  # 부딫혔을 때 충돌 카운트 +1
+            pg.mixer.Sound.play(pg.mixer.Sound('audio/gothit.wav'))
             print(f"Crashed {_crashed} times")
 
         pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'], False, True)  # 쏜 총이 적 맞았을 때 적 kill
 
         G_all_sprites.update()  # 모든 객체 위치 업데이트
         G_all_sprites.draw(displaysurf)
-
         pg.display.update()
         clock.tick(ct.FPS)  # 시간 업데이트

@@ -94,8 +94,8 @@ class EventMover(VelocityMover):  # 플레이어 속력 정의
 class TrackingMover(VelocityMover):  # 유도
     maxDeg: Final[float] = 2 * math.pi / 360  # 최대,최소 트는 각
     minDot: Final[float] = getHat(0) @ getHat(maxDeg)
-    trackTime: Final[float] = 16  # 방향 트는 시간간견
-    maxtrackTime: Final[float] = 2  # 실질 따라오는 시간
+    trackTime: Final[float] = 12  # 방향 트는 시간간격
+    maxtrackTime: Final[float] = 3  # 실질 따라오는 시간
 
     def __init__(self, pos: Coordinate, vel: Coordinate, toTrack: Mover):
         super().__init__(pos, vel)

@@ -21,10 +21,10 @@ class Element(pg.sprite.Sprite):
 
         self._frame = 0
 
-    def update(self, *args: Any, **kwargs: Any) -> None:
+    def update(self, *args: Any, **kwargs: Any) -> None:  # 1프레임 후 객체 이동
         self._frame += 1
         self.mover.advance(*args, **kwargs)
-        if not self.mover.in_bound():
+        if not self.mover.in_bound():  # 경계에 닿으면 kill
             self.kill()
 
         get_actual(self.rect).center = self.mover.as_trimmed_tuple()

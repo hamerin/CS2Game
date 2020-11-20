@@ -28,5 +28,6 @@ class Generator(Element):
         for ref, gen in self.danmaku:
             if ref == -1:
                 self.group.add(*gen(self.mover.pos.as_trimmed_tuple()))
+                pg.mixer.Sound.play(pg.mixer.Sound('audio/matched.wav'))
 
         super().kill()
