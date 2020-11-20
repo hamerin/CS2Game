@@ -1,0 +1,33 @@
+{
+    "__type__": "Gen",
+    "mover": {
+        "__type__": "Velocity",
+        "pos": "__rdtop__",
+        "vel": [0, 3]
+    },
+    "image": {
+        "__type__": "Block",
+        "width": 12,
+        "height": 12,
+        "color": "__red__"
+    },
+    "group": "danmaku",
+    "danmaku": [
+        {
+            "__type__": "Burst",
+            "__wrap__": true,
+            "pos": "__arg__",
+            "refresh": -1,
+            "vel": 3.5,
+            "baseN": 40,
+            "N": 16,
+            "offset": 0,
+            "image": {
+                "__type__": "Block",
+                "color": "__red__",
+                "width": 4,
+                "height": 10
+            }
+        }
+    ]
+}
