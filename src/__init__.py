@@ -30,59 +30,43 @@ def prompt_difficulty() -> str:  # 난이도 입력(한글자)
 
     return allow[idx]
 
-
 def _loadfiles(diff: str) -> Dict[str, Dict[str, Any]]:
     patterndir = Path.cwd() / ct.PATTERNDIR / diff
 
     ret: Dict[str, Any] = dict()
     for path in patterndir.iterdir():
         with path.open() as f:
-            ret[path.stem] = json.loads(f.read())
+            ret[path.stem] = json.loads(f.read())  # 파일 불러오기
 
     return ret
-
 
 def _loadsounds() -> Dict[str, pg.mixer.Sound]:
     audiodir: Path = Path.cwd() / ct.AUDIODIR
 
     ret: Dict[str, pg.mixer.Sound] = dict()
     for path in audiodir.iterdir():
-        ret[path.stem] = pg.mixer.Sound(path.open())
+        ret[path.stem] = pg.mixer.Sound(path.open())  # 소리 불러오기
 
     return ret
-
 
 def _enemychoose(enemygroup: pg.sprite.Group, parser: Parser,
                  loadeddict: Dict[str, Dict[str, Any]]) -> None:
     def _add(*args: str) -> None:
-        for st in args:
-            enemygroup.add(parser.parse(loadeddict[st]))
+        for st in args: enemygroup.add(parser.parse(loadeddict[st]))
 
     rn: int = random.randrange(21)
 
-    if rn == 0:
-        _add('mix')
-    if 1 <= rn <= 3:
-        _add('burst')
-    if 4 <= rn <= 6:
-        _add('plane')
-    if 7 <= rn <= 9:
-        _add('radial')
-    if 10 <= rn <= 11:
-        _add('burst_follow')
-    if 12 <= rn <= 13:
-        _add('plane_follow')
-    if 14 <= rn <= 15:
-        _add('radial_follow')
-    if rn == 16:
-        _add('burst', 'radial')
-    if rn == 17:
-        _add('burst', 'plane')
-    if rn == 18:
-        _add('plane', 'radial')
-    if rn == 19:
-        _add('burst', 'plane', 'radial')
-
+    if rn == 0: _add('mix')
+    if 1 <= rn <= 3: _add('burst')
+    if 4 <= rn <= 6: _add('plane')
+    if 7 <= rn <= 9: _add('radial')
+    if 10 <= rn <= 11: _add('burst_follow')
+    if 12 <= rn <= 13: _add('plane_follow')
+    if 14 <= rn <= 15: _add('radial_follow')
+    if rn == 16: _add('burst', 'radial')
+    if rn == 17: _add('burst', 'plane')
+    if rn == 18: _add('plane', 'radial')
+    if rn == 19: _add('burst', 'plane', 'radial')  # 적 고르기
 
 def game() -> None:  # 본체
     diff = prompt_difficulty()  # 난이도 불러오기
@@ -90,7 +74,7 @@ def game() -> None:  # 본체
     pg.init()  # 초기화
     pg.mixer.init()
 
-    pg.display.set_caption('막장 피하기 슈팅')  # 제목
+    pg.display.set_caption('막장 피하기&슈팅')  # 제목
     displaysurf = pg.display.set_mode((ct.WIDTH, ct.HEIGHT), 0, 32)  # 게임 크기 설정
     clock = pg.time.Clock()  # 시간 설정
 
@@ -114,7 +98,7 @@ def game() -> None:  # 본체
 
     _frame: int = 0
     frame: int = 0
-    score: int = 0
+    score: int = -1000
     limittime: float = ct.LIMITTIME
     onon: int = 0  # 변수 결정
 
@@ -144,14 +128,12 @@ def game() -> None:  # 본체
                 pg.quit()
                 sys.exit()
 
-        displaysurf.fill(ct.WHITE)  # 배경 색
+        displaysurf.fill(ct.BLACK)  # 배경 색
         if pg.sprite.groupcollide(groupdict['player'], groupdict['danmaku'], False, False):
             score += 1  # 부딫혔을 때 충돌 카운트 +1
             pg.mixer.Sound.play(sounddict['gothit'])
 
-        # 쏜 총이 적 맞았을 때 적 kill
-        pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'],
-                               False, True)
+        pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'], False, True)  # 쏜 총이 적 맞았을 때 적 kill
 
         enemyn = len(groupdict['enemy'])
         for key in groupdict:

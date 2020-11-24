@@ -9,7 +9,7 @@
         "__type__": "Block",
         "width": 12,
         "height": 12,
-        "color": "__black__"
+        "color": "__white__"
     },
     "group": "danmaku",
     "danmaku": [

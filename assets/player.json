@@ -8,7 +8,7 @@
         "__type__": "Block",
         "width": 4,
         "height": 4,
-        "color": "__black__"
+        "color": "__yellow__"
     },
     "group": "bullet",
     "danmaku": [
@@ -19,10 +19,10 @@
             "refresh": 12,
             "vel": 12,
             "N": 7,
-            "baseN": 200,
+            "baseN": 180,
             "image": {
                 "__type__": "Block",
-                "color": "__black__",
+                "color": "__gray__",
                 "width": 7,
                 "height": 8
             },
