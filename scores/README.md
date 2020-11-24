@@ -1,0 +1,1 @@
+This folder contains score datum as .pkl files.

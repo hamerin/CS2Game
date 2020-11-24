@@ -2,6 +2,7 @@ import sys
 import json
 import random
 import copy
+import pickle
 from pathlib import Path
 from typing import Final, Tuple, Dict, List, Any
 
@@ -12,23 +13,9 @@ from .element import Element
 from .mover import AccelerationMover, EventMover
 from .basedanmaku import RadialBaseDanmaku, BurstBaseDanmaku, PlaneBaseDanmaku
 from .image import BlockImage
+from .helpers.vector import Coordinate, parseVector, Vector
 from .parser import Parser  # 보조 함수들 불러오기
 
-
-def prompt_difficulty() -> str:  # 난이도 입력(한글자)
-    allow: List[str] = ['e', 'easy', 'n', 'normal',
-                        'h', 'hard', 'i', 'insane', 'x', 'extra']
-    inp = input(
-        'select difficulty\ne: easy  n: normal  h: hard  i: insane  x: extra\nDifficulty: ')
-
-    if not inp in allow:  # 다른 글자 들어오면 에러
-        raise ValueError
-
-    idx = allow.index(inp)
-    if idx % 2 == 0:
-        idx += 1
-
-    return allow[idx]
 
 def _loadfiles(diff: str) -> Dict[str, Dict[str, Any]]:
     patterndir = Path.cwd() / ct.PATTERNDIR / diff
@@ -40,6 +27,7 @@ def _loadfiles(diff: str) -> Dict[str, Dict[str, Any]]:
 
     return ret
 
+
 def _loadsounds() -> Dict[str, pg.mixer.Sound]:
     audiodir: Path = Path.cwd() / ct.AUDIODIR
 
@@ -49,34 +37,119 @@ def _loadsounds() -> Dict[str, pg.mixer.Sound]:
 
     return ret
 
+
 def _enemychoose(enemygroup: pg.sprite.Group, parser: Parser,
                  loadeddict: Dict[str, Dict[str, Any]]) -> None:
     def _add(*args: str) -> None:
-        for st in args: enemygroup.add(parser.parse(loadeddict[st]))
+        for st in args:
+            enemygroup.add(parser.parse(loadeddict[st]))
 
     rn: int = random.randrange(21)
 
-    if rn == 0: _add('mix')
-    if 1 <= rn <= 3: _add('burst')
-    if 4 <= rn <= 6: _add('plane')
-    if 7 <= rn <= 9: _add('radial')
-    if 10 <= rn <= 11: _add('burst_follow')
-    if 12 <= rn <= 13: _add('plane_follow')
-    if 14 <= rn <= 15: _add('radial_follow')
-    if rn == 16: _add('burst', 'radial')
-    if rn == 17: _add('burst', 'plane')
-    if rn == 18: _add('plane', 'radial')
-    if rn == 19: _add('burst', 'plane', 'radial')  # 적 고르기
+    if rn == 0:
+        _add('mix')
+    if 1 <= rn <= 3:
+        _add('burst')
+    if 4 <= rn <= 6:
+        _add('plane')
+    if 7 <= rn <= 9:
+        _add('radial')
+    if 10 <= rn <= 11:
+        _add('burst_follow')
+    if 12 <= rn <= 13:
+        _add('plane_follow')
+    if 14 <= rn <= 15:
+        _add('radial_follow')
+    if rn == 16:
+        _add('burst', 'radial')
+    if rn == 17:
+        _add('burst', 'plane')
+    if rn == 18:
+        _add('plane', 'radial')
+    if rn == 19:
+        _add('burst', 'plane', 'radial')  # 적 고르기
 
-def game() -> None:  # 본체
-    diff = prompt_difficulty()  # 난이도 불러오기
 
+def _write_text(screen: pg.surface.Surface, size: int, pos: Coordinate,
+                text: str, color: Tuple[int, int, int]) -> None:
+    font = pg.font.SysFont(pg.font.get_default_font(), size)
+
+    textsurf = font.render(text, True, color)
+    screen.blit(textsurf, parseVector(pos).as_trimmed_tuple())
+
+
+def _write_text_ct(screen: pg.surface.Surface, size: int, pos: Coordinate,
+                   text: str, color: Tuple[int, int, int]) -> None:
+    font = pg.font.SysFont(pg.font.get_default_font(), size)
+
+    textsurf = font.render(text, True, color)
+
+    blit_pos = parseVector(pos) - Vector(*textsurf.get_size()) / 2
+    screen.blit(textsurf, blit_pos.as_trimmed_tuple())
+
+
+def _write_text_rt(screen: pg.surface.Surface, size: int, pos: Coordinate,
+                   text: str, color: Tuple[int, int, int]) -> None:
+    font = pg.font.SysFont(pg.font.get_default_font(), size)
+
+    textsurf = font.render(text, True, color)
+
+    blit_pos = parseVector(pos) - Vector(textsurf.get_width(), 0)
+    screen.blit(textsurf, blit_pos.as_trimmed_tuple())
+
+
+def init() -> Tuple[pg.surface.Surface, pg.time.Clock]:
     pg.init()  # 초기화
-    pg.mixer.init()
 
     pg.display.set_caption('막장 피하기&슈팅')  # 제목
     displaysurf = pg.display.set_mode((ct.WIDTH, ct.HEIGHT), 0, 32)  # 게임 크기 설정
     clock = pg.time.Clock()  # 시간 설정
+
+    return displaysurf, clock
+
+
+# 난이도 입력(한글자)
+def prompt_difficulty(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tuple[int, int, int]]:
+    allow: Dict[int, Tuple[str, Tuple[int, int, int]]] = {ord('e'): ('easy', ct.BLUETRACK),
+                                                          ord('n'): ('normal', ct.GREENTRACK),
+                                                          ord('h'): ('hard', ct.YELLOW),
+                                                          ord('i'): ('insane', ct.REDTRACK),
+                                                          ord('x'): ('extra', ct.RED)}
+
+    _write_text_ct(displaysurf, 60, (ct.WIDTH / 2, ct.HEIGHT * 0.15),
+                   'Select difficulty', ct.WHITE)
+
+    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.3),
+                   'e: easy', ct.BLUETRACK)
+    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.4),
+                   'n: normal', ct.GREENTRACK)
+    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.5),
+                   'h: hard', ct.YELLOW)
+    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.6),
+                   'i: insane', ct.REDTRACK)
+    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.7),
+                   'x: extra', ct.RED)
+
+    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.85),
+                   'q: quit', ct.WHITE)
+
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT\
+               or (event.type == pg.KEYDOWN and event.key == ord('q')):  # 종료
+                pg.quit()
+                sys.exit()
+
+            if event.type == pg.KEYDOWN and event.key in allow:
+                return allow[event.key]
+
+        pg.display.update()
+        clock.tick(ct.FPS)
+
+
+# 본체
+def game(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tuple[int, int, int], int]:
+    diff, diff_color = prompt_difficulty(displaysurf, clock)  # 난이도 불러오기
 
     screenrect = displaysurf.get_rect()  # 게임 영역 설정
 
@@ -98,7 +171,7 @@ def game() -> None:  # 본체
 
     _frame: int = 0
     frame: int = 0
-    score: int = -1000
+    score: int = ct.INITIALSCORE
     limittime: float = ct.LIMITTIME
     onon: int = 0  # 변수 결정
 
@@ -118,9 +191,7 @@ def game() -> None:  # 본체
 
         if onon == 1:  # 게임 끝
             if frame == ct.OVERTIME:
-                print(f"FINAL SCORE: {-score}")
-                pg.quit()
-                sys.exit()
+                return diff, diff_color, score
 
         for event in pg.event.get():
             groupdict['player'].update(event=event)  # 객체 위치 이동
@@ -130,18 +201,64 @@ def game() -> None:  # 본체
 
         displaysurf.fill(ct.BLACK)  # 배경 색
         if pg.sprite.groupcollide(groupdict['player'], groupdict['danmaku'], False, False):
-            score += 1  # 부딫혔을 때 충돌 카운트 +1
+            score -= 1  # 부딫혔을 때 충돌 카운트 +1
             pg.mixer.Sound.play(sounddict['gothit'])
 
-        pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'], False, True)  # 쏜 총이 적 맞았을 때 적 kill
+        # 쏜 총이 적 맞았을 때 적 kill
+        pg.sprite.groupcollide(groupdict['bullet'], groupdict['enemy'],
+                               False, True)
 
         enemyn = len(groupdict['enemy'])
         for key in groupdict:
             groupdict[key].update()  # 모든 객체 위치 업데이트
             groupdict[key].draw(displaysurf)
-        score += ct.PENALTY * (enemyn - len(groupdict['enemy']))
+        # 적이 자연적으로 죽을 경우 페널티
+        score -= ct.PENALTY * (enemyn - len(groupdict['enemy']))
 
-        if _frame % 60 == 0:
-            print(f"Score: {-score}")
+        _write_text(displaysurf, 60, (20, 20),
+                    f"{score}", ct.WHITE)
+        _write_text_rt(displaysurf, 60, (ct.WIDTH-20, 20),
+                       diff, diff_color)
+
         pg.display.update()
         clock.tick(ct.FPS)  # 시간 업데이트
+
+
+def result(displaysurf: pg.surface.Surface, clock: pg.time.Clock,
+           diff: str, diff_color: Tuple[int, int, int], score: int) -> None:
+    scorefile: Path = Path.cwd() / ct.SCOREDIR / f"{diff}.pkl"
+
+    scores: List[int] = []
+
+    try:
+        scores = pickle.load(scorefile.open("rb"))
+    except FileNotFoundError:
+        pass
+
+    scores.append(score)
+    scores.sort()
+    scores.reverse()
+    scores = scores[:5]
+
+    pickle.dump(scores, scorefile.open("wb"))
+
+    displaysurf.fill(ct.BLACK)
+    _write_text_ct(displaysurf, 60, (ct.WIDTH / 2, ct.HEIGHT * 0.15),
+                   f'Score ({diff})', diff_color)
+
+    for i, sco in enumerate(scores):
+        _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * (0.3 + 0.1*i)),
+                       f'{i + 1}. {sco}', ct.WHITE)
+
+    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.85),
+                   f'Your score: {score}', ct.WHITE)
+
+    while True:
+        for event in pg.event.get():
+            if event.type == pg.QUIT\
+               or (event.type == pg.KEYDOWN and event.key == ord('q')):  # 종료
+                pg.quit()
+                sys.exit()
+
+        pg.display.update()
+        clock.tick(ct.FPS)

@@ -1,5 +1,7 @@
 from typing import TypeVar, Optional, Generator
 
+import pygame as pg
+
 T = TypeVar('T')
 
 

@@ -19,6 +19,7 @@ PI: Final[float] = math.pi      #3.1415
 ELEMENTSIZE: Final[Tuple[int, int]] = (10, 10)      #객체 기본 크기
 FPS: Final[int] = 60        #FPS
 
+INITIALSCORE: Final[int] = 1000
 PENALTY: Final[int] = 80
 LIMITTIME: Final[float] = 80
 LIMITREDUCE: Final[float] = 0.6
@@ -27,3 +28,4 @@ OVERTIME: Final[int] = 450  # 기타 상수
 
 PATTERNDIR: Final[str] = 'assets'
 AUDIODIR: Final[str] = 'audio'
+SCOREDIR: Final[str] = 'scores'
