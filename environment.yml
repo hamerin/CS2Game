@@ -38,5 +38,8 @@ dependencies:
   - xz=5.2.5
   - zlib=1.2.11
   - pip:
+    - altgraph==0.17
     - pygame==2.0.0
+    - pyinstaller==4.1
+    - pyinstaller-hooks-contrib==2020.10
 prefix: /home/hamerin/anaconda3/envs/CS2Game
