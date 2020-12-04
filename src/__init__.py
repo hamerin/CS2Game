@@ -17,7 +17,8 @@ from .helpers.vector import Coordinate, parseVector, Vector
 from .parser import Parser  # 보조 함수들 불러오기
 
 
-def _loadfiles(diff: str) -> Dict[str, Dict[str, Any]]:
+def loadfiles(diff: str) -> Dict[str, Dict[str, Any]]:
+    """패턴 폴더에서 diff 난이도에 해당하는 패턴 파일을 불러온다."""
     patterndir = Path.cwd() / ct.PATTERNDIR / diff
 
     ret: Dict[str, Any] = dict()
@@ -28,7 +29,8 @@ def _loadfiles(diff: str) -> Dict[str, Dict[str, Any]]:
     return ret
 
 
-def _loadsounds() -> Dict[str, pg.mixer.Sound]:
+def loadsounds() -> Dict[str, pg.mixer.Sound]:
+    """오디오 파일 폴더에서 오디오 파일을 불러온다."""
     audiodir: Path = Path.cwd() / ct.AUDIODIR
 
     ret: Dict[str, pg.mixer.Sound] = dict()
@@ -38,8 +40,16 @@ def _loadsounds() -> Dict[str, pg.mixer.Sound]:
     return ret
 
 
-def _enemychoose(enemygroup: pg.sprite.Group, parser: Parser,
-                 loadeddict: Dict[str, Dict[str, Any]]) -> None:
+def enemychoose(enemygroup: pg.sprite.Group, parser: Parser,
+                loadeddict: Dict[str, Dict[str, Any]]) -> None:
+    """새로운 적을 랜덤으로 생성한다.
+
+    Args:
+        enemygroup: 적이 추가될 스프라이트 그룹
+        parser: Parser 객체
+        loadeddict: loadfiles 함수에 의해 로드된 패턴 딕셔너리
+
+    """
     def _add(*args: str) -> None:
         for st in args:
             enemygroup.add(parser.parse(loadeddict[st]))
@@ -70,16 +80,36 @@ def _enemychoose(enemygroup: pg.sprite.Group, parser: Parser,
         _add('burst', 'plane', 'radial')  # 적 고르기
 
 
-def _write_text(screen: pg.surface.Surface, size: int, pos: Coordinate,
-                text: str, color: Tuple[int, int, int]) -> None:
+def write_text(screen: pg.surface.Surface, size: int, pos: Coordinate,
+               text: str, color: Tuple[int, int, int]) -> None:
+    """왼쪽 위를 위치의 기준으로 하여 텍스트를 쓴다.
+
+    Args:
+        screen: 텍스트가 렌더링될 Surface
+        size: 텍스트 크기
+        pos: 텍스트 위치
+        text: 텍스트 내용
+        color: 텍스트 색상
+
+    """
     font = pg.font.SysFont(pg.font.get_default_font(), size)
 
     textsurf = font.render(text, True, color)
     screen.blit(textsurf, parseVector(pos).as_trimmed_tuple())
 
 
-def _write_text_ct(screen: pg.surface.Surface, size: int, pos: Coordinate,
-                   text: str, color: Tuple[int, int, int]) -> None:
+def write_text_ct(screen: pg.surface.Surface, size: int, pos: Coordinate,
+                  text: str, color: Tuple[int, int, int]) -> None:
+    """중앙을 위치의 기준으로 하여 텍스트를 쓴다.
+
+    Args:
+        screen: 텍스트가 렌더링될 Surface
+        size: 텍스트 크기
+        pos: 텍스트 위치
+        text: 텍스트 내용
+        color: 텍스트 색상
+
+    """
     font = pg.font.SysFont(pg.font.get_default_font(), size)
 
     textsurf = font.render(text, True, color)
@@ -88,8 +118,18 @@ def _write_text_ct(screen: pg.surface.Surface, size: int, pos: Coordinate,
     screen.blit(textsurf, blit_pos.as_trimmed_tuple())
 
 
-def _write_text_rt(screen: pg.surface.Surface, size: int, pos: Coordinate,
-                   text: str, color: Tuple[int, int, int]) -> None:
+def write_text_rt(screen: pg.surface.Surface, size: int, pos: Coordinate,
+                  text: str, color: Tuple[int, int, int]) -> None:
+    """오른쪽 위를 위치의 기준으로 하여 텍스트를 쓴다.
+
+    Args:
+        screen: 텍스트가 렌더링될 Surface
+        size: 텍스트 크기
+        pos: 텍스트 위치
+        text: 텍스트 내용
+        color: 텍스트 색상
+
+    """
     font = pg.font.SysFont(pg.font.get_default_font(), size)
 
     textsurf = font.render(text, True, color)
@@ -99,6 +139,12 @@ def _write_text_rt(screen: pg.surface.Surface, size: int, pos: Coordinate,
 
 
 def init() -> Tuple[pg.surface.Surface, pg.time.Clock]:
+    """게임을 초기화한다.
+
+    Returns:
+        초기화된 최상위 Surface와 Clock 객체
+
+    """
     pg.init()  # 초기화
 
     pg.display.set_caption('막장 피하기&슈팅')  # 제목
@@ -108,30 +154,39 @@ def init() -> Tuple[pg.surface.Surface, pg.time.Clock]:
     return displaysurf, clock
 
 
-# 난이도 입력(한글자)
 def prompt_difficulty(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tuple[int, int, int]]:
+    """난이도 선택 화면을 구현한다.
+
+    Args:
+        displaysurf: init 함수에 의해 반환된 최상위 Surface
+        clock: init 함수에 의해 반환된 Clock
+
+    Returns:
+        난이도, 난이도에 해당하는 색상을 tuple로 반환한다.    
+
+    """
     allow: Dict[int, Tuple[str, Tuple[int, int, int]]] = {ord('e'): ('easy', ct.BLUETRACK),
                                                           ord('n'): ('normal', ct.GREENTRACK),
                                                           ord('h'): ('hard', ct.YELLOW),
                                                           ord('i'): ('insane', ct.REDTRACK),
                                                           ord('x'): ('extra', ct.RED)}
 
-    _write_text_ct(displaysurf, 60, (ct.WIDTH / 2, ct.HEIGHT * 0.15),
-                   'Select difficulty', ct.WHITE)
+    write_text_ct(displaysurf, 60, (ct.WIDTH / 2, ct.HEIGHT * 0.15),
+                  'Select difficulty', ct.WHITE)
 
-    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.3),
-                   'e: easy', ct.BLUETRACK)
-    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.4),
-                   'n: normal', ct.GREENTRACK)
-    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.5),
-                   'h: hard', ct.YELLOW)
-    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.6),
-                   'i: insane', ct.REDTRACK)
-    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.7),
-                   'x: extra', ct.RED)
+    write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.3),
+                  'e: easy', ct.BLUETRACK)
+    write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.4),
+                  'n: normal', ct.GREENTRACK)
+    write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.5),
+                  'h: hard', ct.YELLOW)
+    write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.6),
+                  'i: insane', ct.REDTRACK)
+    write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.7),
+                  'x: extra', ct.RED)
 
-    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.85),
-                   'q: quit', ct.WHITE)
+    write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.85),
+                  'q: quit', ct.WHITE)
 
     while True:
         for event in pg.event.get():
@@ -147,9 +202,20 @@ def prompt_difficulty(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> 
         clock.tick(ct.FPS)
 
 
-# 본체
-def game(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tuple[int, int, int], int]:
-    diff, diff_color = prompt_difficulty(displaysurf, clock)  # 난이도 불러오기
+def game(displaysurf: pg.surface.Surface, clock: pg.time.Clock,
+         diff: str, diff_color: Tuple[int, int, int]) -> int:
+    """게임의 메인 로직을 실행한다.
+
+    Args:
+        displaysurf: init 함수에 의해 반환된 최상위 Surface
+        clock: init 함수에 의해 반환된 Clock
+        diff: prompt_difficulty 함수에 의해 반환된 난이도
+        diff_color: prompt_difficulty 함수에 의해 반환된 난이도에 해당하는 색상
+
+    Returns:
+        게임 결과(점수)
+
+    """
 
     screenrect = displaysurf.get_rect()  # 게임 영역 설정
 
@@ -166,8 +232,8 @@ def game(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tu
     spritedict['player'] = parser.load('assets/player.json')
     groupdict['player'].add(spritedict['player'])  # 플레이어 추가
 
-    loadeddict = _loadfiles(diff)  # 패턴 파일 로드
-    sounddict = _loadsounds()
+    loadeddict = loadfiles(diff)  # 패턴 파일 로드
+    sounddict = loadsounds()
 
     _frame: int = 0
     frame: int = 0
@@ -182,7 +248,7 @@ def game(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tu
         frame += 1
 
         if frame == limittime // 1 and onon == 0:  # 게임 중 적 생성 시간일 때
-            _enemychoose(groupdict['enemy'], parser, loadeddict)  # 적 생성
+            enemychoose(groupdict['enemy'], parser, loadeddict)  # 적 생성
             frame = 0  # 적 생성 시간 초기화
             if limittime > ct.OVERLIMIT:
                 limittime -= ct.LIMITREDUCE  # 적 생성 주기 단축
@@ -191,7 +257,7 @@ def game(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tu
 
         if onon == 1:  # 게임 끝
             if frame == ct.OVERTIME:
-                return diff, diff_color, score
+                return score
 
         for event in pg.event.get():
             groupdict['player'].update(event=event)  # 객체 위치 이동
@@ -215,10 +281,10 @@ def game(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tu
         # 적이 자연적으로 죽을 경우 페널티
         score -= ct.PENALTY * (enemyn - len(groupdict['enemy']))
 
-        _write_text(displaysurf, 60, (20, 20),
-                    f"{score}", ct.WHITE)
-        _write_text_rt(displaysurf, 60, (ct.WIDTH-20, 20),
-                       diff, diff_color)
+        write_text(displaysurf, 60, (20, 20),
+                   f"{score}", ct.WHITE)
+        write_text_rt(displaysurf, 60, (ct.WIDTH-20, 20),
+                      diff, diff_color)
 
         pg.display.update()
         clock.tick(ct.FPS)  # 시간 업데이트
@@ -226,6 +292,16 @@ def game(displaysurf: pg.surface.Surface, clock: pg.time.Clock) -> Tuple[str, Tu
 
 def result(displaysurf: pg.surface.Surface, clock: pg.time.Clock,
            diff: str, diff_color: Tuple[int, int, int], score: int) -> None:
+    """스코어보드를 업데이트하고 출력한다.
+
+    Args:
+        displaysurf: init 함수에 의해 반환된 최상위 Surface
+        clock: init 함수에 의해 반환된 Clock
+        diff: prompt_difficulty 함수에 의해 반환된 난이도
+        diff_color: prompt_difficulty 함수에 의해 반환된 난이도에 해당하는 색상
+        score: game 함수에 의해 반환된 점수
+
+    """
     scorefile: Path = Path.cwd() / ct.SCOREDIR / f"{diff}.pkl"
 
     scores: List[int] = []
@@ -243,15 +319,15 @@ def result(displaysurf: pg.surface.Surface, clock: pg.time.Clock,
     pickle.dump(scores, scorefile.open("wb"))
 
     displaysurf.fill(ct.BLACK)
-    _write_text_ct(displaysurf, 60, (ct.WIDTH / 2, ct.HEIGHT * 0.15),
-                   f'Score ({diff})', diff_color)
+    write_text_ct(displaysurf, 60, (ct.WIDTH / 2, ct.HEIGHT * 0.15),
+                  f'Score ({diff})', diff_color)
 
     for i, sco in enumerate(scores):
-        _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * (0.3 + 0.1*i)),
-                       f'{i + 1}. {sco}', ct.WHITE)
+        write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * (0.3 + 0.1*i)),
+                      f'{i + 1}. {sco}', ct.WHITE)
 
-    _write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.85),
-                   f'Your score: {score}', ct.WHITE)
+    write_text_ct(displaysurf, 40, (ct.WIDTH / 2, ct.HEIGHT * 0.85),
+                  f'Your score: {score}', ct.WHITE)
 
     while True:
         for event in pg.event.get():

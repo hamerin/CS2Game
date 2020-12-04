@@ -9,6 +9,18 @@ from .basedanmaku import BaseDanmaku
 
 
 class Generator(Element):
+    """다른 스프라이트를 생성하는 스프라이트를 구현한다.
+
+    danmaku의 원소의 첫째 원소는 생성 주기이며, 둘째 원소는 생성 함수이다.
+    생성 주기는 프레임 단위이며, -1일 경우 객체가 파괴될 때 생성된다.
+
+    Attributes:
+        mover: 스프라이트의 이동을 처리하는 Mover 객체
+        image: 총알을 렌더링할 이미지
+        group: 생성될 스프라이트가 포함될 그룹
+        danmaku: 탄막 생성 주기와 생성 함수를 포함하는 list
+
+    """
     def __init__(self, mover: Mover, image: pg.Surface,
                  group: pg.sprite.Group,
                  danmaku: List[Tuple[int, Callable[[Tuple[int, int]], BaseDanmaku]]]) -> None:

@@ -20,6 +20,14 @@ T = TypeVar('T')
 
 
 class Parser:
+    """JSON 파일을 파싱하여 해당하는 객체를 반환한다.
+
+    Attributes:
+        screenrect: 최상위 Surface의 boundary box
+        groupdict: 스프라이트 그룹을 포함하는 dict
+        spritedict: 스프라이트를 포함하는 dict
+
+    """
     allow = {"Gen": Generator,
              "Generator": Generator,
              "Radial": RadialBaseDanmaku,
@@ -40,6 +48,25 @@ class Parser:
         self.spritedict = spritedict
 
     def _parseRandom(self, mode: str) -> Vector:
+        """랜덤 위치를 반환한다.
+
+        mode의 값은
+        'random',
+        'rdleft', 'rdright', 'rdtop', 'rdbottom',
+        'rdmidx', 'rdmidy'
+        이 중 하나에 양쪽으로 언더스코어 두 개를 붙인 꼴이다.
+        Ex) '__random__'
+
+        Args:
+            mode: 위치 모드
+
+        Returns:
+            mode에 따른 랜덤 위치 벡터
+
+        Raises:
+            ValueError: mode의 값이 위에 명시된 값이 아닐 경우
+
+        """
         w = self.screenrect.width
         h = self.screenrect.height
         rx = random.randint(0, w)
@@ -68,6 +95,27 @@ class Parser:
             raise ValueError
 
     def _parseColor(self, data: Union[List[int], str]) -> Tuple[int, int, int]:
+        """색상을 파싱하여 반환한다.
+
+        data가 str인 경우, 다음 형식 중 하나여야 한다.
+            constant.py에 정의된 색상 상수 이름 x에 대해, '__x__'꼴
+                Ex) '__blue__'
+            색상 코드 꼴
+                Ex) '01abc2'
+
+        data가 list일 경우, [0, 256)의 정수값을 담은 길이 3의 list여야한다.
+
+        Args:
+            data: 색상 데이터
+
+        Returns:
+            파싱된 색상 객체(길이 3의 tuple)
+
+        Raises:
+            TypeError: data의 type이 str이나 list가 아닐 경우
+            ValueError: 위의 파싱 규칙에 해당되지 않는 경우
+
+        """
         st: str
         ret: Tuple[int, int, int]
 
@@ -106,9 +154,34 @@ class Parser:
         raise ValueError
 
     def _parsePosition(self, data: Union[str, List[Union[int, float]]]) -> Vector:
-        allow: Final[List[str]] = ['topleft', 'bottomleft', 'topright', 'bottomright',
-                                   'midtop', 'midleft', 'midbottom', 'midright',
-                                   'center']
+        """위치를 파싱하여 반환한다.
+
+        data가 str인 경우,
+        'center',
+        'topleft', 'bottomleft', 'topright', 'bottomright',
+        'midtop', 'midleft', 'midbottom', 'midright',
+        'random',
+        'rdleft', 'rdright', 'rdtop', 'rdbottom',
+        'rdmidx', 'rdmidy'
+        이 중 하나에 양쪽으로 언더스코어 두 개를 붙인 꼴이다.
+        Ex) __center__
+
+        data가 list일 경우, 정수 혹은 실수를 포함하는 길이 2의 list여야한다.
+
+        Args:
+            data: 위치 데이터
+
+        Returns:
+            파싱된 2차원 위치 벡터
+
+        Raises:
+            TypeError: data의 type이 str이나 list가 아닐 경우
+            ValueError: 위의 파싱 규칙에 해당되지 않는 경우
+
+        """
+        allow: Final[List[str]] = ['center',
+                                   'topleft', 'bottomleft', 'topright', 'bottomright',
+                                   'midtop', 'midleft', 'midbottom', 'midright']
         allow_rd: Final[List[str]] = ['random',
                                       'rdleft', 'rdright', 'rdtop', 'rdbottom',
                                       'rdmidx', 'rdmidy']
@@ -141,6 +214,30 @@ class Parser:
         raise ValueError
 
     def parse(self, data: Dict[str, Any]) -> Any:
+        """dict 형태의 JSON 데이터를 파싱하여 반환한다.
+
+        기본적으로 파싱할 객체의 signature를 runtime에 인식하여 자동으로 객체를 생성한다.
+        data는 default값이 정의되어 있지 않은 argument의 이름을 모두 key로 가지고 있어야 한다.
+
+        argument의 이름이 아닌 특수한 key값은 다음과 같다.
+            '__type__': 필수. 반환할 객체의 type을 정의한다.
+            '__wrap__': 정의되어 있을 경우 파싱된 객체를 반환하는 Callable를 반환한다.
+            'args': *args의 값을 정의한다. 이때 value는 list형이어야 한다.
+            'kwargs': **kwargs의 값을 정의한다. 이때 value는 dict형이어야 한다.
+
+        특수한 value값은 다음과 같다.
+            '__arg__': '__wrap__'이 정의되어 있을 경우, 반환될 Callable의 argument를 사용한다.
+
+        Args:
+            data: 파싱할 JSON 데이터
+
+        Returns:
+            파싱된 객체
+
+        Raises:
+            ValueError: 위의 파싱 규칙에 해당되지 않는 경우
+
+        """
         if not '__type__' in data:
             raise ValueError
         if not data['__type__'] in self.allow:
@@ -178,7 +275,6 @@ class Parser:
                     continue
 
                 tmp = data[name]
-                # print(tmp)
 
                 if tmp == "__arg__":
                     continue
@@ -221,9 +317,6 @@ class Parser:
                     kwargs.update({name: tmp})
 
         if not wrap:
-            # print(elem)
-            # print(*args)
-            # print(*kwargs.items())
             return elem(*args, **kwargs)
         else:
             def ret(*wrap_args: Any) -> Any:
@@ -231,6 +324,15 @@ class Parser:
             return ret
 
     def load(self, rel_path: str) -> Any:
+        """상대 경로에 정의되어 있는 json 확장자의 파일을 읽어서 파싱한다.
+
+        Args:
+            rel_path: json 파일의 상대 경로
+
+        Returns:
+            파싱된 객체
+
+        """
         path: Path = Path.cwd() / rel_path
 
         ret: Any = None
